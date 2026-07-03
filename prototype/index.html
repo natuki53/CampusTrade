@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusTrade</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <button class="menu-button" type="button" aria-label="メニューを開く" aria-controls="side-menu" aria-expanded="false" data-menu-open>
+      <i data-lucide="menu"></i>
+    </button>
+
+    <a class="brand" href="#home" data-target="home" aria-label="CampusTrade トップ">
+      <span class="brand-mark">CT</span>
+      <span>
+        <strong>CampusTrade</strong>
+        <small>学内リユース</small>
+      </span>
+    </a>
+
+    <nav class="primary-nav" aria-label="主要ナビゲーション">
+      <button class="nav-link is-active" type="button" data-target="home">
+        <i data-lucide="search"></i>
+        <span>探す</span>
+      </button>
+      <button class="nav-link" type="button" data-target="sell">
+        <i data-lucide="plus-circle"></i>
+        <span>出品</span>
+      </button>
+      <button class="nav-link" type="button" data-target="mypage">
+        <i data-lucide="user-round"></i>
+        <span>マイページ</span>
+      </button>
+      <button class="nav-link" type="button" data-target="admin">
+        <i data-lucide="shield-check"></i>
+        <span>管理</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-button" type="button" aria-label="通知">
+        <i data-lucide="bell"></i>
+      </button>
+      <button class="login-pill" type="button" data-target="auth">ログイン</button>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" data-menu-backdrop hidden></div>
+  <aside class="side-drawer" id="side-menu" aria-label="メニュー" aria-hidden="true" data-menu-drawer>
+    <div class="drawer-head">
+      <button class="icon-button" type="button" aria-label="メニューを閉じる" data-menu-close>
+        <i data-lucide="x"></i>
+      </button>
+      <a class="brand drawer-brand" href="#home" data-target="home" aria-label="CampusTrade トップ">
+        <span class="brand-mark">CT</span>
+        <span>
+          <strong>CampusTrade</strong>
+          <small>学内リユース</small>
+        </span>
+      </a>
+    </div>
+
+    <nav class="drawer-nav" aria-label="サイドメニュー">
+      <button type="button" data-target="home"><i data-lucide="search"></i><span>探す</span></button>
+      <button type="button" data-target="sell"><i data-lucide="plus-circle"></i><span>出品する</span></button>
+      <button type="button" data-target="mypage"><i data-lucide="user-round"></i><span>マイページ</span></button>
+      <button type="button" data-target="admin"><i data-lucide="shield-check"></i><span>管理者メニュー</span></button>
+    </nav>
+
+    <div class="drawer-section theme-section" aria-label="テーマ設定">
+      <p class="drawer-label">テーマ</p>
+      <div class="theme-options">
+        <button class="theme-option is-active" type="button" data-theme-option="aqua" aria-pressed="true">
+          <span class="theme-swatch theme-swatch-aqua" aria-hidden="true"></span>
+          <span>水色</span>
+        </button>
+        <button class="theme-option" type="button" data-theme-option="pink" aria-pressed="false">
+          <span class="theme-swatch theme-swatch-pink" aria-hidden="true"></span>
+          <span>ピンク</span>
+        </button>
+        <button class="theme-option" type="button" data-theme-option="purple" aria-pressed="false">
+          <span class="theme-swatch theme-swatch-purple" aria-hidden="true"></span>
+          <span>紫</span>
+        </button>
+        <button class="theme-option" type="button" data-theme-option="lime" aria-pressed="false">
+          <span class="theme-swatch theme-swatch-lime" aria-hidden="true"></span>
+          <span>黄緑</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="drawer-note">
+      <strong>安全な受け渡し</strong>
+      <p>図書館前や学生会館など、人の多い場所での受け渡しをおすすめします。</p>
+    </div>
+  </aside>
+
+  <main>
+    <section class="view is-active" data-view="home" aria-labelledby="home-title">
+      <div class="search-stage">
+        <div class="search-copy">
+          <p class="eyebrow">学内受け渡し</p>
+          <h1 id="home-title">必要なものを、近くの学生から探す</h1>
+          <p class="lead">教科書、文房具、電化製品、生活用品を出品中の商品からすぐに確認できます。</p>
+        </div>
+        <form class="search-box" action="#list">
+          <label for="home-search">キーワード検索</label>
+          <div class="search-row">
+            <i data-lucide="search"></i>
+            <input id="home-search" type="search" value="統計学 教科書" aria-label="検索キーワード">
+            <button class="primary-button" type="button" data-target="list">検索</button>
+          </div>
+          <div class="quick-chips" aria-label="カテゴリ">
+            <button type="button">教科書</button>
+            <button type="button">文房具</button>
+            <button type="button">電化製品</button>
+            <button type="button">0円</button>
+          </div>
+        </form>
+      </div>
+
+      <section class="home-section" aria-labelledby="category-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">カテゴリ</p>
+            <h2 id="category-title">カテゴリから探す</h2>
+          </div>
+          <button class="text-button" type="button" data-target="list">商品検索へ</button>
+        </div>
+        <div class="category-rail">
+          <button class="category-tile" type="button" data-target="list">
+            <i data-lucide="book-open"></i>
+            <span>教科書</span>
+            <small>42件</small>
+          </button>
+          <button class="category-tile" type="button" data-target="list">
+            <i data-lucide="pencil-ruler"></i>
+            <span>文房具</span>
+            <small>18件</small>
+          </button>
+          <button class="category-tile" type="button" data-target="list">
+            <i data-lucide="plug-zap"></i>
+            <span>電化製品</span>
+            <small>23件</small>
+          </button>
+          <button class="category-tile" type="button" data-target="list">
+            <i data-lucide="lamp-desk"></i>
+            <span>生活用品</span>
+            <small>31件</small>
+          </button>
+          <button class="category-tile" type="button" data-target="list">
+            <i data-lucide="badge-japanese-yen"></i>
+            <span>0円</span>
+            <small>9件</small>
+          </button>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section class="main-column" aria-labelledby="new-items-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">新着</p>
+              <h2 id="new-items-title">新着商品</h2>
+            </div>
+            <button class="text-button" type="button" data-target="list">すべて見る</button>
+          </div>
+          <div class="product-grid">
+            <article class="product-card" tabindex="0" data-target="detail">
+              <div class="product-art art-books" role="img" aria-label="統計学の教科書">
+                <span class="book b1"></span><span class="book b2"></span><span class="book b3"></span>
+              </div>
+              <div class="product-info">
+                <p class="price">¥1,200</p>
+                <h3>統計学入門 第3版</h3>
+                <p>教科書 · 書き込み少なめ</p>
+              </div>
+            </article>
+            <article class="product-card" tabindex="0" data-target="detail">
+              <div class="product-art art-books" role="img" aria-label="文房具セット">
+                <span class="book b1"></span><span class="book b2"></span><span class="book b3"></span>
+              </div>
+              <div class="product-info">
+                <p class="price">¥800</p>
+                <h3>文房具セット</h3>
+                <p>文房具 · 未使用ノートあり</p>
+              </div>
+            </article>
+            <article class="product-card" tabindex="0" data-target="detail">
+              <div class="product-art art-kettle" role="img" aria-label="電気ケトル">
+                <span class="kettle-body"></span><span class="handle"></span><span class="spout"></span>
+              </div>
+              <div class="product-info">
+                <p class="price">¥1,500</p>
+                <h3>電気ケトル 0.8L</h3>
+                <p>電化製品 · 動作確認済み</p>
+              </div>
+            </article>
+            <article class="product-card" tabindex="0" data-target="detail">
+              <div class="product-art art-lamp" role="img" aria-label="デスクライト">
+                <span class="shade"></span><span class="arm"></span><span class="base"></span>
+              </div>
+              <div class="product-info">
+                <p class="price">¥0</p>
+                <h3>デスクライト</h3>
+                <p>生活用品 · 引っ越し整理</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <aside class="side-panel" aria-labelledby="today-title">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">本日</p>
+              <h2 id="today-title">取引の動き</h2>
+            </div>
+          </div>
+          <div class="activity-list">
+            <div class="activity-row">
+              <span class="status-dot open"></span>
+              <div>
+                <strong>12件</strong>
+                <p>本日の新着出品</p>
+              </div>
+            </div>
+            <div class="activity-row">
+              <span class="status-dot request"></span>
+              <div>
+                <strong>8件</strong>
+                <p>購入希望</p>
+              </div>
+            </div>
+            <div class="activity-row">
+              <span class="status-dot locked"></span>
+              <div>
+                <strong>5件</strong>
+                <p>取引中</p>
+              </div>
+            </div>
+            <div class="activity-row">
+              <span class="status-dot closed"></span>
+              <div>
+                <strong>18件</strong>
+                <p>今週の完了取引</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+    </section>
+
+    <section class="view" data-view="list" aria-labelledby="list-title">
+      <div class="page-title-row">
+        <div>
+          <p class="eyebrow">検索結果</p>
+          <h1 id="list-title">商品検索</h1>
+        </div>
+        <button class="primary-button" type="button" data-target="sell">
+          <i data-lucide="plus"></i>
+          出品する
+        </button>
+      </div>
+
+      <div class="search-layout">
+        <aside class="filter-panel" aria-label="絞り込み">
+          <label>
+            キーワード
+            <input type="search" value="教科書">
+          </label>
+          <label>
+            カテゴリ
+            <select>
+              <option>すべて</option>
+              <option selected>教科書</option>
+              <option>文房具</option>
+              <option>電化製品</option>
+            </select>
+          </label>
+          <label>
+            価格帯
+            <select>
+              <option>指定なし</option>
+              <option selected>0円から2,000円</option>
+              <option>2,000円以上</option>
+            </select>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" checked>
+            販売中のみ
+          </label>
+        </aside>
+
+        <div class="result-column">
+          <div class="result-toolbar">
+            <p><strong>24件</strong> の商品</p>
+            <select aria-label="並び替え">
+              <option>新しい順</option>
+              <option>価格が安い順</option>
+              <option>価格が高い順</option>
+            </select>
+          </div>
+          <div class="product-list">
+            <article class="list-item" tabindex="0" data-target="detail">
+              <div class="product-art art-books small" role="img" aria-label="統計学の教科書">
+                <span class="book b1"></span><span class="book b2"></span><span class="book b3"></span>
+              </div>
+              <div class="list-main">
+                <div>
+                  <p class="price">¥1,200</p>
+                  <h2>統計学入門 第3版</h2>
+                  <p>後期授業で使用。数ページだけマーカーあり。</p>
+                </div>
+                <div class="meta-row">
+                  <span>教科書</span>
+                  <span>新品に近い</span>
+                  <span>3分前</span>
+                </div>
+              </div>
+              <button class="icon-button" type="button" aria-label="気になる">
+                <i data-lucide="heart"></i>
+              </button>
+            </article>
+            <article class="list-item" tabindex="0" data-target="detail">
+              <div class="product-art art-notebook small" role="img" aria-label="ノートパソコンスタンド">
+                <span class="screen"></span><span class="stand"></span>
+              </div>
+              <div class="list-main">
+                <div>
+                  <p class="price">¥1,800</p>
+                  <h2>ノートPCスタンド</h2>
+                  <p>角度調整可。研究室で半年使用。</p>
+                </div>
+                <div class="meta-row">
+                  <span>生活用品</span>
+                  <span>目立った傷なし</span>
+                  <span>18分前</span>
+                </div>
+              </div>
+              <button class="icon-button" type="button" aria-label="気になる">
+                <i data-lucide="heart"></i>
+              </button>
+            </article>
+            <article class="list-item" tabindex="0" data-target="detail">
+              <div class="product-art art-books small" role="img" aria-label="文房具セット">
+                <span class="book b1"></span><span class="book b2"></span><span class="book b3"></span>
+              </div>
+              <div class="list-main">
+                <div>
+                  <p class="price">¥800</p>
+                  <h2>文房具セット</h2>
+                  <p>ノート、ペン、付箋のセット。未使用品を含みます。</p>
+                </div>
+                <div class="meta-row">
+                  <span>文房具</span>
+                  <span>傷あり</span>
+                  <span>1時間前</span>
+                </div>
+              </div>
+              <button class="icon-button" type="button" aria-label="気になる">
+                <i data-lucide="heart"></i>
+              </button>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" data-view="detail" aria-labelledby="detail-title">
+      <div class="detail-layout">
+        <div class="gallery-panel">
+          <div class="product-art art-books hero-art" role="img" aria-label="統計学の教科書">
+            <span class="book b1"></span><span class="book b2"></span><span class="book b3"></span>
+          </div>
+          <div class="thumb-row">
+            <button class="thumb is-active" type="button" aria-label="画像1">
+              <span class="product-art art-books tiny"><span class="book b1"></span><span class="book b2"></span></span>
+            </button>
+            <button class="thumb" type="button" aria-label="画像2">
+              <span class="product-art art-notebook tiny"><span class="screen"></span><span class="stand"></span></span>
+            </button>
+            <button class="thumb" type="button" aria-label="画像3">
+              <span class="product-art art-lamp tiny"><span class="shade"></span><span class="arm"></span></span>
+            </button>
+          </div>
+        </div>
+
+        <article class="detail-panel">
+          <div class="detail-head">
+            <div>
+              <span class="badge detail-status">出品中</span>
+              <h1 id="detail-title">統計学入門 第3版</h1>
+              <p class="detail-price">¥1,200</p>
+            </div>
+            <button class="icon-button" type="button" aria-label="共有">
+              <i data-lucide="share-2"></i>
+            </button>
+          </div>
+
+          <dl class="spec-grid">
+            <div><dt>カテゴリ</dt><dd>教科書</dd></div>
+            <div><dt>状態</dt><dd>新品に近い</dd></div>
+            <div><dt>受け渡し</dt><dd>図書館前</dd></div>
+            <div><dt>出品者</dt><dd>なつ</dd></div>
+          </dl>
+
+          <p class="description">情報学部の統計学で使用した教科書です。表紙に小さな擦れがありますが、本文の書き込みは少なめです。受け渡しは平日夕方を希望します。</p>
+
+          <div class="detail-actions" aria-live="polite"></div>
+        </article>
+      </div>
+
+      <div class="conversation-layout">
+        <section class="message-panel" aria-labelledby="comments-title">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">コメント</p>
+              <h2 id="comments-title">商品コメント</h2>
+            </div>
+          </div>
+          <div class="message-list">
+            <div class="message-row">
+              <strong>みか</strong>
+              <p>新版との違いはありますか？</p>
+              <span>10:24</span>
+            </div>
+            <div class="message-row seller">
+              <strong>なつ</strong>
+              <p>授業指定はこの版でした。章構成はほぼ同じです。</p>
+              <span>10:31</span>
+            </div>
+          </div>
+          <form class="inline-form">
+            <label for="comment-input">コメント</label>
+            <input id="comment-input" type="text" placeholder="質問を入力">
+            <button class="primary-button" type="button">投稿</button>
+          </form>
+        </section>
+
+        <section class="message-panel transaction-panel" aria-labelledby="transaction-title">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">取引</p>
+              <h2 id="transaction-title">取引メッセージ</h2>
+            </div>
+          </div>
+          <div class="locked-placeholder">
+            <i data-lucide="lock-keyhole"></i>
+            <p>購入申し込み後、出品者と購入者に表示されます。</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" data-view="sell" aria-labelledby="sell-title">
+      <div class="page-title-row">
+        <div>
+          <p class="eyebrow">出品</p>
+          <h1 id="sell-title">商品を出品</h1>
+        </div>
+        <span class="badge">写真は最大5枚</span>
+      </div>
+
+      <div class="form-layout">
+        <form class="edit-form">
+          <label>
+            商品名
+            <input id="preview-name" type="text" value="統計学入門 第3版">
+          </label>
+          <label>
+            説明
+            <textarea rows="5">授業で使用した教科書です。本文の書き込みは少なめです。</textarea>
+          </label>
+          <div class="form-row">
+            <label>
+              価格
+              <input id="preview-price" type="number" value="1200" min="0">
+            </label>
+            <label>
+              カテゴリ
+              <select>
+                <option selected>教科書</option>
+                <option>参考書</option>
+                <option>文房具</option>
+                <option>電化製品</option>
+                <option>生活用品</option>
+              </select>
+            </label>
+          </div>
+          <div class="location-field">
+            <label for="pickup-location">
+              受け渡し場所
+              <input id="pickup-location" type="text" value="図書館前" placeholder="例: 図書館前、学生会館入口、本館ロビー">
+            </label>
+            <label class="checkbox-card" for="pickup-consult">
+              <input id="pickup-consult" type="checkbox">
+              <span>購入者と相談して決める</span>
+            </label>
+            <p class="hint">人の多い場所や時間帯を入力できます。未定の場合は要相談を選べます。</p>
+          </div>
+          <fieldset>
+            <legend>商品の状態</legend>
+            <div class="option-grid">
+              <label><input type="radio" name="condition" checked> 新品に近い</label>
+              <label><input type="radio" name="condition"> 目立った傷なし</label>
+              <label><input type="radio" name="condition"> 傷あり</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>商品写真</legend>
+            <div class="upload-grid">
+              <button class="upload-slot is-filled" type="button"><i data-lucide="image"></i><span>写真1</span></button>
+              <button class="upload-slot" type="button"><i data-lucide="plus"></i><span>写真を追加</span></button>
+              <button class="upload-slot" type="button"><i data-lucide="plus"></i><span>写真を追加</span></button>
+              <button class="upload-slot" type="button"><i data-lucide="plus"></i><span>写真を追加</span></button>
+              <button class="upload-slot" type="button"><i data-lucide="plus"></i><span>写真を追加</span></button>
+            </div>
+            <p class="hint">明るい場所で撮った写真を登録すると、商品の状態が伝わりやすくなります。</p>
+          </fieldset>
+          <div class="form-actions">
+            <button class="secondary-button" type="button">下書き保存</button>
+            <button class="primary-button" type="button">出品する</button>
+          </div>
+        </form>
+
+        <aside class="preview-panel" aria-labelledby="preview-title">
+          <p class="eyebrow">確認</p>
+          <h2 id="preview-title">出品内容</h2>
+          <article class="product-card preview-card">
+            <div class="product-art art-books" role="img" aria-label="商品画像プレビュー">
+              <span class="book b1"></span><span class="book b2"></span><span class="book b3"></span>
+            </div>
+            <div class="product-info">
+              <p class="price" id="price-output">¥1,200</p>
+              <h3 id="name-output">統計学入門 第3版</h3>
+              <p>教科書 · 新品に近い</p>
+            </div>
+          </article>
+          <div class="listing-tips">
+            <div><i data-lucide="map-pin"></i><span data-pickup-preview>受け渡しは図書館前を予定</span></div>
+            <div><i data-lucide="message-circle"></i><span>購入希望者からコメントが届きます</span></div>
+            <div><i data-lucide="shield-check"></i><span>公開前に内容をもう一度確認できます</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" data-view="mypage" aria-labelledby="mypage-title">
+      <div class="page-title-row">
+        <div>
+          <p class="eyebrow">マイページ</p>
+          <h1 id="mypage-title">マイページ</h1>
+        </div>
+        <button class="primary-button" type="button" data-target="sell">
+          <i data-lucide="plus"></i>
+          出品する
+        </button>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="stats-panel">
+          <div><strong>7</strong><span>出品中</span></div>
+          <div><strong>2</strong><span>取引中</span></div>
+          <div><strong>12</strong><span>完了</span></div>
+        </section>
+        <section class="trade-panel" aria-labelledby="active-trade-title">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">進行中</p>
+              <h2 id="active-trade-title">進行中の取引</h2>
+            </div>
+          </div>
+          <div class="trade-row">
+            <span class="product-art art-kettle tiny"><span class="kettle-body"></span><span class="handle"></span></span>
+            <div>
+              <strong>電気ケトル 0.8L</strong>
+              <p>購入者: ゆうき · 本日 17:20 図書館前</p>
+            </div>
+            <button class="secondary-button" type="button" data-target="detail">詳細</button>
+          </div>
+          <div class="trade-row">
+            <span class="product-art art-books tiny"><span class="book b1"></span><span class="book b2"></span></span>
+            <div>
+              <strong>統計学入門 第3版</strong>
+              <p>出品者: なつ · 受け渡し調整中</p>
+            </div>
+            <button class="secondary-button" type="button" data-target="detail">詳細</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="table-panel" aria-labelledby="history-title">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">履歴</p>
+            <h2 id="history-title">出品・購入履歴</h2>
+          </div>
+        </div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>商品</th>
+              <th>区分</th>
+              <th>状態</th>
+              <th>価格</th>
+              <th>更新</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="商品">統計学入門 第3版</td>
+              <td data-label="区分">購入</td>
+              <td data-label="状態"><span class="badge locked">取引中</span></td>
+              <td data-label="価格">¥1,200</td>
+              <td data-label="更新">10分前</td>
+            </tr>
+            <tr>
+              <td data-label="商品">デスクライト</td>
+              <td data-label="区分">出品</td>
+              <td data-label="状態"><span class="badge open">出品中</span></td>
+              <td data-label="価格">¥0</td>
+              <td data-label="更新">昨日</td>
+            </tr>
+            <tr>
+              <td data-label="商品">英語リーディング教材</td>
+              <td data-label="区分">購入</td>
+              <td data-label="状態"><span class="badge closed">完了</span></td>
+              <td data-label="価格">¥600</td>
+              <td data-label="更新">3日前</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section class="view" data-view="admin" aria-labelledby="admin-title">
+      <div class="page-title-row">
+        <div>
+          <p class="eyebrow">管理</p>
+          <h1 id="admin-title">管理者ダッシュボード</h1>
+        </div>
+        <button class="secondary-button" type="button">
+          <i data-lucide="download"></i>
+          出力
+        </button>
+      </div>
+
+      <div class="admin-layout">
+        <section class="table-panel" aria-labelledby="admin-products-title">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">確認</p>
+              <h2 id="admin-products-title">商品管理</h2>
+            </div>
+            <select aria-label="ステータス">
+              <option>すべて</option>
+              <option>出品中</option>
+              <option>取引中</option>
+              <option>禁止</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>商品</th>
+                <th>出品者</th>
+                <th>取引</th>
+                <th>表示</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>統計学入門 第3版</td>
+                <td>なつ</td>
+                <td><span class="badge open">出品中</span></td>
+                <td><span class="badge open">表示中</span></td>
+                <td><button class="danger-button" type="button">禁止</button></td>
+              </tr>
+              <tr>
+                <td>型番不明モバイルバッテリー</td>
+                <td>れん</td>
+                <td><span class="badge locked">取引中</span></td>
+                <td><span class="badge prohibited">禁止</span></td>
+                <td><button class="secondary-button" type="button">解除</button></td>
+              </tr>
+              <tr>
+                <td>英語リーディング教材</td>
+                <td>みか</td>
+                <td><span class="badge closed">取引完了</span></td>
+                <td><span class="badge open">表示中</span></td>
+                <td><button class="danger-button" type="button">禁止</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <aside class="category-panel" aria-labelledby="category-title">
+          <p class="eyebrow">カテゴリ</p>
+          <h2 id="category-title">カテゴリ管理</h2>
+          <div class="category-list">
+            <button type="button">教科書 <i data-lucide="pencil"></i></button>
+            <button type="button">参考書 <i data-lucide="pencil"></i></button>
+            <button type="button">文房具 <i data-lucide="pencil"></i></button>
+            <button type="button">電化製品 <i data-lucide="pencil"></i></button>
+            <button type="button">生活用品 <i data-lucide="pencil"></i></button>
+          </div>
+          <form class="inline-form vertical">
+            <label for="new-category">カテゴリ追加</label>
+            <input id="new-category" type="text" placeholder="カテゴリ名">
+            <button class="primary-button" type="button">追加</button>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" data-view="auth" aria-labelledby="auth-title">
+      <div class="auth-layout">
+        <section class="auth-panel">
+          <p class="eyebrow">ログイン</p>
+          <h1 id="auth-title">ログイン</h1>
+          <div class="auth-notice" data-auth-message hidden>
+            出品や購入にはログインが必要です。
+          </div>
+          <form class="edit-form compact-form">
+            <label>
+              学生番号
+              <input type="text" value="s23001">
+            </label>
+            <label>
+              パスワード
+              <input type="password" value="password">
+            </label>
+            <button class="primary-button" type="button" data-login-action>ログイン</button>
+          </form>
+        </section>
+        <section class="auth-panel">
+          <p class="eyebrow">会員登録</p>
+          <h2>会員登録</h2>
+          <form class="edit-form compact-form">
+            <label>
+              学生番号
+              <input type="text" placeholder="s23002">
+            </label>
+            <label>
+              ニックネーム
+              <input type="text" placeholder="たろう">
+            </label>
+            <label>
+              パスワード
+              <input type="password" placeholder="8文字以上">
+            </label>
+            <button class="secondary-button" type="button">登録する</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

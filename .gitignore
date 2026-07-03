@@ -1,0 +1,8 @@
+.DS_Store
+
+# Eclipse workspace metadata
+/.metadata/
+/Servers/
+
+# Other workspace projects
+/R08_S3A1SP応用/

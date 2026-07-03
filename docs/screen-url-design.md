@@ -10,6 +10,8 @@
 |---|---|
 | 不要 | 未ログインでもアクセスできる |
 | 必要 | ログイン済みユーザーだけアクセスできる |
+| 購入者 | 対象商品の購入者または管理者だけアクセスできる |
+| 出品者 | 対象商品の出品者または管理者だけアクセスできる |
 | 管理者 | 管理者権限のユーザーだけアクセスできる |
 | 関係者 | 対象商品の出品者、購入者、管理者だけアクセスできる |
 
@@ -24,6 +26,10 @@
 | `PRODUCT_NEW` | 商品出品画面 | `/products/new` | 必要 |
 | `PRODUCT_EDIT` | 商品編集画面 | `/products/{id}/edit` | 必要 |
 | `MYPAGE` | マイページ | `/mypage` | 必要 |
+| `BUYER_PURCHASES` | 購入者ページ | `/mypage/purchases` | 必要 |
+| `BUYER_TRANSACTION_DETAIL` | 購入者取引詳細 | `/mypage/purchases/{productId}` | 購入者 |
+| `SELLER_SALES` | 出品者ページ | `/mypage/sales` | 必要 |
+| `SELLER_TRANSACTION_DETAIL` | 出品者取引詳細 | `/mypage/sales/{productId}` | 出品者 |
 | `LOGIN` | ログイン画面 | `/login` | 不要 |
 | `REGISTER` | 会員登録画面 | `/register` | 不要 |
 | `ADMIN_PRODUCTS` | 管理者商品一覧 | `/admin/products` | 管理者 |
@@ -59,22 +65,27 @@
 
 | メソッド | URL | 認証 | 処理 | 正常時遷移 |
 |---|---|---|---|---|
-| POST | `/products/{id}/purchase` | 必要 | 購入申し込み | `/products/{id}` |
-| POST | `/products/{id}/cancel` | 関係者 | 取引キャンセル | `/products/{id}` |
-| POST | `/products/{id}/close` | 関係者 | 取引完了 | `/products/{id}` |
+| POST | `/products/{id}/purchase` | 必要 | 購入申し込み | `/mypage/purchases/{id}` |
+| GET | `/mypage/purchases/{productId}` | 購入者 | 購入者向け取引詳細を表示 | `BUYER_TRANSACTION_DETAIL` |
+| GET | `/mypage/sales/{productId}` | 出品者 | 出品者向け取引詳細を表示 | `SELLER_TRANSACTION_DETAIL` |
+| POST | `/products/{id}/cancel` | 関係者 | 取引キャンセル | 実行元に応じた取引一覧または取引詳細 |
+| POST | `/products/{id}/close` | 関係者 | 取引完了 | 実行元に応じた取引詳細 |
 
 ### 4.4 メッセージ
 
 | メソッド | URL | 認証 | 処理 | 正常時遷移 |
 |---|---|---|---|---|
 | POST | `/products/{id}/comments` | 必要 | 商品コメントを投稿 | `/products/{id}` |
-| POST | `/products/{id}/messages` | 関係者 | 取引メッセージを投稿 | `/products/{id}` |
+| POST | `/mypage/purchases/{productId}/messages` | 購入者 | 購入者側から取引メッセージを投稿 | `/mypage/purchases/{productId}` |
+| POST | `/mypage/sales/{productId}/messages` | 出品者 | 出品者側から取引メッセージを投稿 | `/mypage/sales/{productId}` |
 
 ### 4.5 マイページ
 
 | メソッド | URL | 認証 | 処理 | 正常時遷移 |
 |---|---|---|---|---|
-| GET | `/mypage` | 必要 | 出品履歴・購入履歴を表示 | `MYPAGE` |
+| GET | `/mypage` | 必要 | 購入者ページ、出品者ページ、取引中商品への入口を表示 | `MYPAGE` |
+| GET | `/mypage/purchases` | 必要 | 自分が購入者になっている取引を表示 | `BUYER_PURCHASES` |
+| GET | `/mypage/sales` | 必要 | 自分が出品した商品と成立済み取引を表示 | `SELLER_SALES` |
 
 ### 4.6 管理者
 
@@ -100,7 +111,7 @@ flowchart TD
     C --> D{"ログイン済み?"}
     D -->|いいえ| E["ログイン画面"]
     D -->|はい| F["購入申し込み"]
-    F --> G["商品詳細画面"]
+    F --> G["購入者取引詳細"]
 ```
 
 ### 5.2 出品
@@ -119,10 +130,14 @@ flowchart TD
 ```mermaid
 flowchart TD
     A["商品詳細画面"] --> B["購入申し込み"]
-    B --> C["LOCKED"]
+    B --> C["購入者取引詳細"]
+    S["出品者ページ"] --> T["出品者取引詳細"]
     C --> D["取引メッセージ"]
+    T --> D
     C --> E["取引キャンセル"]
+    T --> E
     C --> F["取引完了"]
+    T --> F
     E --> G["OPEN"]
     F --> H["CLOSED"]
 ```
@@ -184,7 +199,7 @@ flowchart TD
 | 未ログイン | ログインへの導線 |
 | ログイン済み・他人の商品・`OPEN` | 購入申し込み |
 | 出品者本人・`OPEN` | 編集、非表示 |
-| 出品者本人または購入者・`LOCKED` | 取引メッセージ、キャンセル、取引完了 |
+| 出品者本人または購入者・`LOCKED` | 取引詳細への導線 |
 | `CLOSED` | 取引完了表示のみ |
 | `PROHIBITED` | 一般画面では非表示 |
 
@@ -192,10 +207,65 @@ flowchart TD
 
 表示項目:
 
-- 自分の出品一覧
-- 自分の購入一覧
-- 取引中の商品
-- 取引完了の商品
+- 購入者ページへの導線
+- 出品者ページへの導線
+- 進行中取引のサマリー
+- 取引完了商品のサマリー
+
+### 6.4 購入者ページ
+
+表示対象:
+
+- `buyer_id = ログインユーザーID`
+- `trade_status IN (LOCKED, CLOSED)`
+
+表示項目:
+
+- 購入した商品
+- 出品者ニックネーム
+- 取引ステータス
+- 最終メッセージ日時
+- 購入者取引詳細への導線
+
+### 6.5 出品者ページ
+
+表示対象:
+
+- `seller_id = ログインユーザーID`
+- `deleted_at IS NULL`
+
+表示項目:
+
+- 自分の出品商品
+- 購入者ニックネーム（成立済み取引のみ）
+- 取引ステータス
+- 最終メッセージ日時（成立済み取引のみ）
+- 出品者取引詳細への導線（`LOCKED` または `CLOSED` のみ）
+
+### 6.6 取引詳細
+
+購入者取引詳細と出品者取引詳細は、URL と表示する補助情報を分けるが、同じ商品取引のメッセージスレッドを参照する。
+
+取引詳細は `trade_status = LOCKED` または `CLOSED` の商品だけ表示する。
+
+共通表示項目:
+
+- 商品概要
+- 取引ステータス
+- 取引メッセージ
+- メッセージ入力フォーム
+- 取引キャンセル
+- 取引完了
+
+購入者向け表示項目:
+
+- 出品者ニックネーム
+- 受け渡し調整のメッセージ
+
+出品者向け表示項目:
+
+- 購入者ニックネーム
+- 発送または受け渡し対応のメッセージ
 
 ## 7. エラー時遷移
 
@@ -215,8 +285,7 @@ flowchart TD
 | `AuthController` | `/login`, `/register` |
 | `ProductController` | `/`, `/products/**` |
 | `ProductImageController` | `/products/{productId}/images/{imageId}` |
-| `TransactionController` | `/products/{id}/purchase`, `/products/{id}/cancel`, `/products/{id}/close` |
-| `MessageController` | `/products/{id}/comments`, `/products/{id}/messages` |
-| `MypageController` | `/mypage` |
+| `TransactionController` | `/products/{id}/purchase`, `/products/{id}/cancel`, `/products/{id}/close`, `/mypage/purchases/{productId}`, `/mypage/sales/{productId}` |
+| `MessageController` | `/products/{id}/comments`, `/mypage/purchases/{productId}/messages`, `/mypage/sales/{productId}/messages` |
+| `MypageController` | `/mypage`, `/mypage/purchases`, `/mypage/sales` |
 | `AdminController` | `/admin/**` |
-

@@ -8,6 +8,7 @@
 - [DB設計書](./db-design.md)
 - [画面遷移・URL設計書](./screen-url-design.md)
 - [機能詳細設計書](./feature-detail-design.md)
+- [UIプロトタイプ](../prototype/index.html)
 
 ## 前提
 

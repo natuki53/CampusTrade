@@ -151,8 +151,9 @@ AND deleted_at IS NULL
 メッセージ表示ルール:
 
 - `COMMENT` は商品詳細画面で公開表示する。
-- `TRANSACTION` は出品者、購入者、管理者だけが閲覧できる。
+- `TRANSACTION` は購入者取引詳細または出品者取引詳細で表示し、出品者、購入者、管理者だけが閲覧できる。
 - `TRANSACTION` では `receiver_id` を必須扱いにする。
+- 一般学生向けの `TRANSACTION` 表示は、対象商品の現在の `seller_id` と `buyer_id` の組み合わせに一致する送受信だけに絞る。
 - 投稿順は `created_at ASC` とする。
 
 ## 7. リレーション
@@ -292,4 +293,3 @@ CREATE INDEX idx_messages_product
 - Enum値は Java の enum として定義し、DB には文字列で保存する。
 - 画像の `image_data` は `@Lob` を使用する。
 - 一覧画面では画像本体をまとめて読み込まず、代表画像の取得処理を分ける。
-

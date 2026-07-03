@@ -12,6 +12,7 @@ CampusTrade は、学内で教科書、参考書、生活用品などを学生�
 - [DB設計書](./docs/db-design.md)
 - [画面遷移・URL設計書](./docs/screen-url-design.md)
 - [機能詳細設計書](./docs/feature-detail-design.md)
+- [UIプロトタイプ](./prototype/index.html)
 
 ## 技術構成
 
@@ -33,7 +34,15 @@ CampusTrade は、学内で教科書、参考書、生活用品などを学生�
 ├── README.md
 ├── docs
 │   ├── README.md
-│   └── basic-design.md
+│   ├── basic-design.md
+│   ├── db-design.md
+│   ├── screen-url-design.md
+│   └── feature-detail-design.md
+├── prototype
+│   ├── README.md
+│   ├── index.html
+│   ├── styles.css
+│   └── app.js
 └── CampusTrade
     ├── build.gradle
     ├── settings.gradle

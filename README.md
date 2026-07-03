@@ -9,6 +9,9 @@ CampusTrade は、学内で教科書、参考書、生活用品などを学生�
 - [要件定義書](./CampusTrade.md)
 - [設計書一覧](./docs/README.md)
 - [基本設計書](./docs/basic-design.md)
+- [DB設計書](./docs/db-design.md)
+- [画面遷移・URL設計書](./docs/screen-url-design.md)
+- [機能詳細設計書](./docs/feature-detail-design.md)
 
 ## 技術構成
 
@@ -97,4 +100,3 @@ cd CampusTrade
 ## 備考
 
 このリポジトリでは、要件定義と設計資料をルートおよび `docs/` に置き、実装コードは `CampusTrade/` 配下で管理します。
-

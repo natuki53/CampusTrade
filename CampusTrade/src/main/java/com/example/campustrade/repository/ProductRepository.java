@@ -2,6 +2,7 @@ package com.example.campustrade.repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,6 +30,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			order by p.createdAt desc
 			""")
 	List<Product> searchPublicProducts(@Param("keyword") String keyword, @Param("categoryIds") Collection<Long> categoryIds);
+
+	@Query("""
+			select p from Product p
+			join fetch p.seller
+			join fetch p.category c
+			left join fetch c.parent
+			left join fetch p.buyer
+			where p.id = :id
+			""")
+	Optional<Product> findDetailById(@Param("id") Long id);
 
 	List<Product> findBySellerIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long sellerId);
 

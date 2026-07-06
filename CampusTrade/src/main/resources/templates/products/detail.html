@@ -53,6 +53,10 @@
           </form>
           <a class="secondary-button" th:if="${currentUser != null and currentUser.id == product.seller.id and product.visibleToPublic}"
               th:href="@{/products/{id}/edit(id=${product.id})}">編集</a>
+          <form th:if="${currentUser != null and currentUser.id == product.seller.id and product.visibleToPublic}"
+              th:action="@{/products/{id}/delete(id=${product.id})}" method="post">
+            <button class="danger-button" type="submit">非表示</button>
+          </form>
         </div>
       </section>
     </section>

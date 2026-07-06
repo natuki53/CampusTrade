@@ -2,10 +2,12 @@ package com.example.campustrade.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -14,8 +16,13 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/products", "/products/*", "/products/*/images/*", "/register",
-								"/css/**", "/js/**", "/images/**")
+						.requestMatchers(HttpMethod.GET, "/", "/products")
+						.permitAll()
+						.requestMatchers(RegexRequestMatcher.regexMatcher(HttpMethod.GET, "^/products/[0-9]+$"))
+						.permitAll()
+						.requestMatchers(RegexRequestMatcher.regexMatcher(HttpMethod.GET, "^/products/[0-9]+/images/[0-9]+$"))
+						.permitAll()
+						.requestMatchers("/register", "/css/**", "/js/**", "/images/**")
 						.permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated())

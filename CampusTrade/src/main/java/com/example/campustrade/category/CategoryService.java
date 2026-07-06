@@ -28,6 +28,13 @@ public class CategoryService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Category> findSelectableCategories() {
+		return categoryRepository.findAllByOrderByIdAsc().stream()
+				.filter(category -> !category.isRoot())
+				.toList();
+	}
+
+	@Transactional(readOnly = true)
 	public List<Category> findChildCategories(Long parentId) {
 		return categoryRepository.findByParentIdOrderByIdAsc(parentId);
 	}

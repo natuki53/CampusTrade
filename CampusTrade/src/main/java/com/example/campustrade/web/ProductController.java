@@ -1,10 +1,9 @@
 package com.example.campustrade.web;
 
-import java.util.List;
-
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.campustrade.category.CategoryService;
@@ -21,6 +19,8 @@ import com.example.campustrade.domain.Product;
 import com.example.campustrade.domain.ProductImage;
 import com.example.campustrade.message.MessageForm;
 import com.example.campustrade.message.MessageService;
+import com.example.campustrade.product.InvalidProductImageException;
+import com.example.campustrade.product.ProductForm;
 import com.example.campustrade.product.ProductImageService;
 import com.example.campustrade.product.ProductSearchForm;
 import com.example.campustrade.product.ProductService;
@@ -54,6 +54,76 @@ public class ProductController {
 		model.addAttribute("rootCategories", categoryService.findRootCategories());
 		model.addAttribute("products", productService.searchPublicProducts(form));
 		return "products/list";
+	}
+
+	@GetMapping("/products/new")
+	public String newForm(@ModelAttribute("productForm") ProductForm form, Model model) {
+		model.addAttribute("categories", categoryService.findSelectableCategories());
+		model.addAttribute("mode", "new");
+		return "products/form";
+	}
+
+	@PostMapping("/products")
+	public String create(@AuthenticationPrincipal CampusTradeUserDetails userDetails,
+			@Valid @ModelAttribute("productForm") ProductForm form,
+			BindingResult bindingResult,
+			Model model) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("categories", categoryService.findSelectableCategories());
+			model.addAttribute("mode", "new");
+			return "products/form";
+		}
+
+		try {
+			Product product = productService.createProduct(form, userDetails.getUser());
+			return "redirect:/products/" + product.getId();
+		} catch (InvalidProductImageException ex) {
+			bindingResult.reject("images", ex.getMessage());
+			model.addAttribute("categories", categoryService.findSelectableCategories());
+			model.addAttribute("mode", "new");
+			return "products/form";
+		}
+	}
+
+	@GetMapping("/products/{id}/edit")
+	public String editForm(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
+			Model model) {
+		Product product = productService.findEditableProduct(id, userDetails.getUser());
+		model.addAttribute("product", product);
+		model.addAttribute("productForm", ProductForm.from(product));
+		model.addAttribute("categories", categoryService.findSelectableCategories());
+		model.addAttribute("mode", "edit");
+		return "products/form";
+	}
+
+	@PostMapping("/products/{id}/edit")
+	public String update(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
+			@Valid @ModelAttribute("productForm") ProductForm form,
+			BindingResult bindingResult,
+			Model model) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("product", productService.findEditableProduct(id, userDetails.getUser()));
+			model.addAttribute("categories", categoryService.findSelectableCategories());
+			model.addAttribute("mode", "edit");
+			return "products/form";
+		}
+
+		try {
+			productService.updateProduct(id, form, userDetails.getUser());
+			return "redirect:/products/" + id;
+		} catch (InvalidProductImageException ex) {
+			bindingResult.reject("images", ex.getMessage());
+			model.addAttribute("product", productService.findEditableProduct(id, userDetails.getUser()));
+			model.addAttribute("categories", categoryService.findSelectableCategories());
+			model.addAttribute("mode", "edit");
+			return "products/form";
+		}
+	}
+
+	@PostMapping("/products/{id}/delete")
+	public String delete(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
+		productService.softDelete(id, userDetails.getUser());
+		return "redirect:/mypage";
 	}
 
 	@GetMapping("/products/{id}")

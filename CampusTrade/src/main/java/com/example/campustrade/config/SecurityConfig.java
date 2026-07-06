@@ -7,20 +7,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		var path = PathPatternRequestMatcher.withDefaults();
 		http
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.GET, "/", "/products")
 						.permitAll()
-						.requestMatchers(RegexRequestMatcher.regexMatcher(HttpMethod.GET, "^/products/[0-9]+$"))
+						.requestMatchers(HttpMethod.GET, "/products/new")
+						.authenticated()
+						.requestMatchers(path.matcher(HttpMethod.GET, "/products/{id}"))
 						.permitAll()
-						.requestMatchers(RegexRequestMatcher.regexMatcher(HttpMethod.GET, "^/products/[0-9]+/images/[0-9]+$"))
+						.requestMatchers(path.matcher(HttpMethod.GET, "/products/{productId}/images/{imageId}"))
 						.permitAll()
 						.requestMatchers("/register", "/css/**", "/js/**", "/images/**")
 						.permitAll()

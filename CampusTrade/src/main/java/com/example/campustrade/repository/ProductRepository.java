@@ -41,9 +41,30 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			""")
 	Optional<Product> findDetailById(@Param("id") Long id);
 
-	List<Product> findBySellerIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long sellerId);
+	@Query("""
+			select p from Product p
+			join fetch p.seller
+			join fetch p.category c
+			left join fetch c.parent
+			left join fetch p.buyer
+			where p.seller.id = :sellerId
+			  and p.deletedAt is null
+			order by p.createdAt desc
+			""")
+	List<Product> findSalesForSeller(@Param("sellerId") Long sellerId);
 
-	List<Product> findByBuyerIdAndTradeStatusInOrderByCreatedAtDesc(Long buyerId, Collection<TradeStatus> tradeStatuses);
+	@Query("""
+			select p from Product p
+			join fetch p.seller
+			join fetch p.category c
+			left join fetch c.parent
+			left join fetch p.buyer
+			where p.buyer.id = :buyerId
+			  and p.tradeStatus in :tradeStatuses
+			order by p.createdAt desc
+			""")
+	List<Product> findPurchasesForBuyer(@Param("buyerId") Long buyerId,
+			@Param("tradeStatuses") Collection<TradeStatus> tradeStatuses);
 
 	List<Product> findAllByOrderByCreatedAtDesc();
 

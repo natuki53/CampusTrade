@@ -101,6 +101,16 @@ public class ProductService {
 		return product;
 	}
 
+	@Transactional(readOnly = true)
+	public List<Product> findPurchases(AppUser currentUser) {
+		return productRepository.findPurchasesForBuyer(currentUser.getId(), List.of(TradeStatus.LOCKED, TradeStatus.CLOSED));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> findSales(AppUser currentUser) {
+		return productRepository.findSalesForSeller(currentUser.getId());
+	}
+
 	@Transactional
 	public Product updateProduct(Long id, ProductForm form, AppUser currentUser) {
 		Product product = findEditableProduct(id, currentUser);

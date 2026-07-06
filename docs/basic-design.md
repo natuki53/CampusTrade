@@ -217,21 +217,19 @@ erDiagram
 
 ### 5.4 categories
 
+カテゴリの分類体系は [カテゴリ設計書](./category-design.md) に従う。大分類（100番台）と小分類（110番台以降）の2階層で管理する。
+
 | カラム | 型 | 制約 | 説明 |
 |---|---|---|---|
-| id | BIGINT | PK | カテゴリID |
+| id | BIGINT | PK | カテゴリID。大分類は100刻み、小分類は大分類内で10刻み |
+| parent_id | BIGINT | NULL, FK | 親カテゴリID。大分類は NULL、小分類は大分類IDを設定 |
 | name | VARCHAR(50) | NOT NULL, UNIQUE | カテゴリ名 |
 | created_at | TIMESTAMP | NOT NULL | 作成日時 |
 | updated_at | TIMESTAMP | NOT NULL | 更新日時 |
 
-初期カテゴリ例:
+商品の `category_id` には **小分類ID**（110, 120, …）を保存する。検索UIでは大分類または小分類で絞り込めるようにする。
 
-- 教科書
-- 参考書
-- 文房具
-- 電化製品
-- 生活用品
-- その他
+初期カテゴリはカテゴリ設計書の全18小分類と5大分類を登録する。詳細は [DB設計書](./db-design.md) の初期データを参照する。
 
 ### 5.5 product_images
 
@@ -367,3 +365,4 @@ com.example.demo
 | 商品削除 | 物理削除は行わず、`deleted_at` による論理削除にする。取引履歴は残す。 |
 | 取引キャンセル | `LOCKED` の間のみ可能。キャンセル時は `buyer_id` を `NULL` に戻し、`trade_status` を `OPEN` に戻す。 |
 | 管理者アカウント | 初期データで管理者を1件作成する。以後の管理者追加は既存管理者がロールを変更する。 |
+| カテゴリ分類 | [カテゴリ設計書](./category-design.md) の2階層体系を採用する。商品には小分類IDを保存する。 |

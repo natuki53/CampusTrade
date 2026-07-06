@@ -81,12 +81,17 @@
 
 ### 6.2 categories
 
+カテゴリの分類体系は [カテゴリ設計書](./category-design.md) に従う。
+
 | カラム | 型 | NULL | 制約 | 説明 |
 |---|---|---|---|---|
-| `id` | BIGINT | 不可 | PK, AUTO_INCREMENT | カテゴリID |
+| `id` | BIGINT | 不可 | PK | カテゴリID。大分類は100刻み、小分類は大分類内で10刻み |
+| `parent_id` | BIGINT | 可 | FK | 親カテゴリID。大分類は NULL、小分類は大分類ID |
 | `name` | VARCHAR(50) | 不可 | UNIQUE | カテゴリ名 |
 | `created_at` | TIMESTAMP | 不可 |  | 作成日時 |
 | `updated_at` | TIMESTAMP | 不可 |  | 更新日時 |
+
+商品の `category_id` には小分類IDのみを保存する。
 
 ### 6.3 products
 
@@ -162,7 +167,8 @@ AND deleted_at IS NULL
 |---|---|---|
 | `users.id` | `products.seller_id` | 1人のユーザーは複数の商品を出品できる |
 | `users.id` | `products.buyer_id` | 1人のユーザーは複数の商品を購入できる |
-| `categories.id` | `products.category_id` | 1カテゴリに複数の商品が属する |
+| `categories.id` | `categories.parent_id` | 大分類と小分類の親子関係 |
+| `categories.id` | `products.category_id` | 1カテゴリ（小分類）に複数の商品が属する |
 | `products.id` | `product_images.product_id` | 1商品に複数画像が属する |
 | `products.id` | `messages.product_id` | 1商品に複数メッセージが属する |
 | `users.id` | `messages.sender_id` | 1ユーザーは複数メッセージを送信できる |
@@ -184,14 +190,33 @@ AND deleted_at IS NULL
 
 ### 9.1 categories
 
-| name |
-|---|
-| 教科書 |
-| 参考書 |
-| 文房具 |
-| 電化製品 |
-| 生活用品 |
-| その他 |
+[カテゴリ設計書](./category-design.md) に定義した5大分類・18小分類を、固定IDで登録する。
+
+| id | parent_id | name |
+|---|---|---|
+| 100 | NULL | 教材・学業関連 |
+| 110 | 100 | 教科書 |
+| 120 | 100 | 参考書 |
+| 130 | 100 | 文房具 |
+| 140 | 100 | PC・タブレット・スマホ |
+| 190 | 100 | その他 |
+| 200 | NULL | ファッション・衣類 |
+| 210 | 200 | 私服 |
+| 220 | 200 | 就活スーツ |
+| 230 | 200 | バッグ |
+| 240 | 200 | 衣装 |
+| 300 | NULL | 一人暮らし応援・日用品 |
+| 310 | 300 | 小型家電 |
+| 320 | 300 | キッチン用品 |
+| 330 | 300 | インテリア |
+| 340 | 300 | 消耗品 |
+| 400 | NULL | 趣味・エンタメ |
+| 410 | 400 | 本・マンガ |
+| 420 | 400 | ゲーム・CD |
+| 430 | 400 | サークル関連 |
+| 500 | NULL | ハンドメイド・その他 |
+| 510 | 500 | 手作り雑貨 |
+| 520 | 500 | おまけ・試供品 |
 
 ### 9.2 管理者ユーザー
 
@@ -217,10 +242,12 @@ CREATE TABLE users (
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE categories (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
+    parent_id BIGINT NULL,
     name VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL,
+    CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE products (

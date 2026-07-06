@@ -16,6 +16,16 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 	@Query("""
 			select m from Message m
 			join fetch m.sender
+			left join fetch m.receiver
+			where m.product.id = :productId
+			  and m.messageType = com.example.campustrade.domain.MessageType.TRANSACTION
+			order by m.createdAt asc
+			""")
+	List<Message> findTransactionMessagesForAdmin(@Param("productId") Long productId);
+
+	@Query("""
+			select m from Message m
+			join fetch m.sender
 			where m.product.id = :productId
 			  and m.messageType = com.example.campustrade.domain.MessageType.COMMENT
 			order by m.createdAt asc

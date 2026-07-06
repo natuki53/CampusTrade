@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>取引詳細 | CampusTrade</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/header :: header('mypage')}"></div>
+
+  <main class="page">
+    <a class="back-link" th:href="${backUrl}">一覧へ戻る</a>
+
+    <section class="transaction-layout">
+      <aside class="transaction-summary">
+        <p class="eyebrow" th:text="${mode == 'buyer' ? 'Purchase' : 'Sale'}">Purchase</p>
+        <h1 th:text="${product.name}">商品名</h1>
+        <p class="detail-price" th:text="|¥${#numbers.formatInteger(product.price, 0, 'COMMA')}|">¥1,200</p>
+        <dl class="meta-list">
+          <div>
+            <dt>状態</dt>
+            <dd th:text="${product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED ? '取引中' : '取引完了'}">取引中</dd>
+          </div>
+          <div>
+            <dt>出品者</dt>
+            <dd th:text="${product.seller.nickname}">出品者</dd>
+          </div>
+          <div>
+            <dt>購入者</dt>
+            <dd th:text="${product.buyer.nickname}">購入者</dd>
+          </div>
+        </dl>
+        <div class="detail-actions" th:if="${product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED}">
+          <form th:action="@{/products/{id}/close(id=${product.id})}" method="post">
+            <button class="primary-button" type="submit">取引完了</button>
+          </form>
+          <form th:action="@{/products/{id}/cancel(id=${product.id})}" method="post">
+            <button class="danger-button" type="submit">キャンセル</button>
+          </form>
+        </div>
+      </aside>
+
+      <section class="transaction-messages">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Messages</p>
+            <h2>取引メッセージ</h2>
+          </div>
+        </div>
+        <div class="message-list" th:if="${!messages.isEmpty()}">
+          <article class="message-row" th:each="message : ${messages}">
+            <strong th:text="${message.sender.nickname}">ユーザー</strong>
+            <p th:text="${message.content}">メッセージ本文</p>
+            <time th:text="${#temporals.format(message.createdAt, 'yyyy/MM/dd HH:mm')}">2026/07/06</time>
+          </article>
+        </div>
+        <p class="empty-state" th:if="${messages.isEmpty()}">まだ取引メッセージはありません。</p>
+
+        <form class="inline-form" th:action="@{${messageUrl}}" th:object="${messageForm}" method="post">
+          <label>
+            <span>メッセージ</span>
+            <textarea th:field="*{content}" rows="3" placeholder="受け渡し場所や時間を入力"></textarea>
+          </label>
+          <p class="field-error" th:if="${messageError}" th:text="${messageError}">エラー</p>
+          <button class="primary-button" type="submit">送信</button>
+        </form>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

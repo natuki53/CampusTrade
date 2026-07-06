@@ -51,6 +51,10 @@
               th:action="@{/products/{id}/purchase(id=${product.id})}" method="post">
             <button class="primary-button" type="submit">購入申し込み</button>
           </form>
+          <a class="primary-link" th:if="${currentUser != null and product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED and product.buyer != null and currentUser.id == product.buyer.id}"
+              th:href="@{/mypage/purchases/{id}(id=${product.id})}">取引詳細</a>
+          <a class="primary-link" th:if="${currentUser != null and product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED and currentUser.id == product.seller.id}"
+              th:href="@{/mypage/sales/{id}(id=${product.id})}">取引詳細</a>
           <a class="secondary-button" th:if="${currentUser != null and currentUser.id == product.seller.id and product.visibleToPublic}"
               th:href="@{/products/{id}/edit(id=${product.id})}">編集</a>
           <form th:if="${currentUser != null and currentUser.id == product.seller.id and product.visibleToPublic}"

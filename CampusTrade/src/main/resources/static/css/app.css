@@ -707,6 +707,28 @@ a {
   color: var(--muted);
 }
 
+.transaction-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.transaction-summary,
+.transaction-messages {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.transaction-summary h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
 @media (max-width: 760px) {
   .app-header,
   .search-stage,
@@ -715,7 +737,8 @@ a {
   .detail-layout,
   .form-grid,
   .dashboard-grid,
-  .list-item {
+  .list-item,
+  .transaction-layout {
     grid-template-columns: 1fr;
   }
 

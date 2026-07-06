@@ -67,6 +67,27 @@ public class TradeService {
 		return product;
 	}
 
+	@Transactional(readOnly = true)
+	public Product findBuyerTransaction(Long productId, AppUser currentUser) {
+		Product product = findParticipantProduct(productId, currentUser);
+		assertTransactionDetailStatus(product);
+		if (currentUser.getRole() != UserRole.ADMIN
+				&& (product.getBuyer() == null || !product.getBuyer().getId().equals(currentUser.getId()))) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		return product;
+	}
+
+	@Transactional(readOnly = true)
+	public Product findSellerTransaction(Long productId, AppUser currentUser) {
+		Product product = findParticipantProduct(productId, currentUser);
+		assertTransactionDetailStatus(product);
+		if (currentUser.getRole() != UserRole.ADMIN && !product.getSeller().getId().equals(currentUser.getId())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		return product;
+	}
+
 	public boolean isParticipant(Product product, AppUser currentUser) {
 		if (currentUser == null) {
 			return false;
@@ -78,5 +99,11 @@ public class TradeService {
 			return true;
 		}
 		return product.getBuyer() != null && product.getBuyer().getId().equals(currentUser.getId());
+	}
+
+	private void assertTransactionDetailStatus(Product product) {
+		if (product.getTradeStatus() != TradeStatus.LOCKED && product.getTradeStatus() != TradeStatus.CLOSED) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "取引詳細を表示できない商品です");
+		}
 	}
 }

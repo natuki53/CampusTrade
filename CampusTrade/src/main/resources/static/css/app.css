@@ -610,14 +610,19 @@ a {
 .editor-form {
   display: grid;
   gap: 16px;
-  max-width: 820px;
+  width: 100%;
   padding: 22px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
 }
 
-.editor-form label {
+.editor-page {
+  width: min(860px, calc(100vw - 24px));
+}
+
+.editor-form label,
+.image-upload-field {
   display: grid;
   gap: 6px;
   color: var(--muted);
@@ -637,6 +642,86 @@ a {
 
 .editor-form textarea {
   resize: vertical;
+}
+
+.image-input {
+  position: absolute;
+  width: 1px !important;
+  height: 1px;
+  min-height: 1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.image-picker {
+  display: grid !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  min-height: 58px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+  background: #fafeff;
+  color: var(--text) !important;
+}
+
+.image-picker-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: var(--radius);
+  padding: 0 14px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 900;
+}
+
+.image-picker-status {
+  justify-self: end;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.selected-file-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selected-file-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  background: #fff;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.selected-file-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-file-item button {
+  min-height: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--danger);
+  font-weight: 900;
 }
 
 .form-grid {
@@ -806,5 +891,13 @@ td form {
   .header-actions {
     justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .image-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .image-picker-status {
+    justify-self: start;
   }
 }

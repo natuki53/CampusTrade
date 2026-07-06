@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title th:text="${mode == 'edit' ? '商品編集 | CampusTrade' : '商品出品 | CampusTrade'}">商品出品 | CampusTrade</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script th:src="@{/js/product-form.js}" defer></script>
 </head>
 <body>
   <div th:replace="~{fragments/header :: header('sell')}"></div>
 
-  <main class="page">
+  <main class="page editor-page">
     <div class="page-title-row">
       <div>
         <p class="eyebrow" th:text="${mode == 'edit' ? 'Edit' : 'Sell'}">Sell</p>
@@ -50,12 +51,18 @@
         <input type="text" th:field="*{conditionLabel}" placeholder="例: 書き込み少なめ、動作確認済み" required>
         <small class="field-error" th:if="${#fields.hasErrors('conditionLabel')}" th:errors="*{conditionLabel}"></small>
       </label>
-      <label>
+      <div class="image-upload-field">
         <span th:text="${mode == 'edit' ? '商品画像（選択すると全画像を差し替え）' : '商品画像'}">商品画像</span>
-        <input type="file" th:field="*{images}" accept="image/jpeg,image/png,image/webp" multiple>
+        <label class="image-picker" for="images">
+          <span class="image-picker-action">画像を追加</span>
+          <span class="image-picker-status" data-image-upload-status>0/5枚</span>
+        </label>
+        <input class="image-input" type="file" th:field="*{images}" accept="image/jpeg,image/png,image/webp"
+            multiple data-image-upload-input data-max-files="5">
+        <ul class="selected-file-list" data-image-upload-list aria-live="polite"></ul>
         <small class="help-text">最大5枚、1枚5MBまで。JPEG、PNG、WebPに対応しています。</small>
         <small class="field-error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></small>
-      </label>
+      </div>
       <button class="primary-button" type="submit" th:text="${mode == 'edit' ? '更新する' : '出品する'}">出品する</button>
     </form>
   </main>

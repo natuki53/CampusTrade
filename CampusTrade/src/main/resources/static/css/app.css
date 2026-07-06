@@ -174,6 +174,8 @@ a {
 .alert {
   padding: 10px 12px;
   border-radius: var(--radius);
+  background: #eef8fb;
+  color: var(--primary-dark);
   font-weight: 700;
 }
 
@@ -192,6 +194,11 @@ a {
   display: block;
   padding: 6px 8px;
   border-radius: var(--radius);
+}
+
+button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
 }
 
 .app-header {
@@ -549,6 +556,15 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.notice-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.notice-stack .alert {
+  margin: 0;
 }
 
 .comments-section {

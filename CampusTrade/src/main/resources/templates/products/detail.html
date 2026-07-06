@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title th:text="${product.name + ' | CampusTrade'}">商品詳細 | CampusTrade</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script th:src="@{/js/purchase-confirm.js}" defer></script>
 </head>
 <body>
   <div th:replace="~{fragments/header :: header('search')}"></div>
@@ -48,7 +49,8 @@
         <div class="detail-actions">
           <a class="primary-link" th:if="${currentUser == null and product.visibleToPublic}" th:href="@{/login}">ログインして購入</a>
           <form th:if="${currentUser != null and product.visibleToPublic and currentUser.id != product.seller.id}"
-              th:action="@{/products/{id}/purchase(id=${product.id})}" method="post">
+              th:action="@{/products/{id}/purchase(id=${product.id})}" method="post"
+              data-purchase-confirm="購入申し込みを行います。申し込み後は出品者との取引メッセージ画面に移動し、受け渡し場所や日時を相談できます。">
             <button class="primary-button" type="submit">購入申し込み</button>
           </form>
           <a class="primary-link" th:if="${currentUser != null and product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED and product.buyer != null and currentUser.id == product.buyer.id}"

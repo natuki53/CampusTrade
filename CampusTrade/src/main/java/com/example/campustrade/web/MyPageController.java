@@ -1,5 +1,6 @@
 package com.example.campustrade.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -125,9 +126,51 @@ public class MyPageController {
 		model.addAttribute("mode", mode);
 		model.addAttribute("messages", messageService.findTransactionMessages(product, userDetails.getUser()));
 		model.addAttribute("messageForm", new MessageForm());
+		model.addAttribute("closeRequestedByCurrentUser", isCloseRequestedByCurrentUser(product, mode));
+		model.addAttribute("cancelRequestedByCurrentUser", isCancelRequestedByCurrentUser(product, mode));
+		model.addAttribute("tradeActionNotices", buildTradeActionNotices(product, mode));
 		model.addAttribute("backUrl", "buyer".equals(mode) ? "/mypage/purchases" : "/mypage/sales");
 		model.addAttribute("messageUrl", "buyer".equals(mode)
 				? "/mypage/purchases/" + product.getId() + "/messages"
 				: "/mypage/sales/" + product.getId() + "/messages");
+	}
+
+	private boolean isCloseRequestedByCurrentUser(Product product, String mode) {
+		if ("buyer".equals(mode)) {
+			return product.isBuyerCloseRequested();
+		}
+		return product.isSellerCloseRequested();
+	}
+
+	private boolean isCancelRequestedByCurrentUser(Product product, String mode) {
+		if ("buyer".equals(mode)) {
+			return product.isBuyerCancelRequested();
+		}
+		return product.isSellerCancelRequested();
+	}
+
+	private List<String> buildTradeActionNotices(Product product, String mode) {
+		List<String> notices = new ArrayList<>();
+		if (product.getTradeStatus() != TradeStatus.LOCKED) {
+			return notices;
+		}
+		boolean buyerView = "buyer".equals(mode);
+		addRequestNotice(notices, product.isBuyerCloseRequested(), buyerView, "購入者", "出品者", "取引完了");
+		addRequestNotice(notices, product.isSellerCloseRequested(), !buyerView, "出品者", "購入者", "取引完了");
+		addRequestNotice(notices, product.isBuyerCancelRequested(), buyerView, "購入者", "出品者", "キャンセル");
+		addRequestNotice(notices, product.isSellerCancelRequested(), !buyerView, "出品者", "購入者", "キャンセル");
+		return notices;
+	}
+
+	private void addRequestNotice(List<String> notices, boolean requested, boolean currentUserRequested,
+			String requesterLabel, String waitingLabel, String actionLabel) {
+		if (!requested) {
+			return;
+		}
+		if (currentUserRequested) {
+			notices.add(actionLabel + "を申請済みです。" + waitingLabel + "が同じ操作を行うまでお待ちください。");
+			return;
+		}
+		notices.add(requesterLabel + "が" + actionLabel + "を申請しています。問題なければ同じ操作を押してください。");
 	}
 }

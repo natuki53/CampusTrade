@@ -31,12 +31,17 @@
             <dd th:text="${product.buyer.nickname}">購入者</dd>
           </div>
         </dl>
+        <div class="notice-stack" th:if="${!tradeActionNotices.isEmpty()}">
+          <p class="alert" th:each="notice : ${tradeActionNotices}" th:text="${notice}">申請中です。</p>
+        </div>
         <div class="detail-actions" th:if="${product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED}">
           <form th:action="@{/products/{id}/close(id=${product.id})}" method="post">
-            <button class="primary-button" type="submit">取引完了</button>
+            <button class="primary-button" type="submit" th:disabled="${closeRequestedByCurrentUser}"
+                th:text="${closeRequestedByCurrentUser ? '完了申請済み' : '取引完了'}">取引完了</button>
           </form>
           <form th:action="@{/products/{id}/cancel(id=${product.id})}" method="post">
-            <button class="danger-button" type="submit">キャンセル</button>
+            <button class="danger-button" type="submit" th:disabled="${cancelRequestedByCurrentUser}"
+                th:text="${cancelRequestedByCurrentUser ? 'キャンセル申請済み' : 'キャンセル'}">キャンセル</button>
           </form>
         </div>
       </aside>

@@ -58,6 +58,18 @@ public class Product {
 	@Column(name = "trade_status", nullable = false, length = 20)
 	private TradeStatus tradeStatus = TradeStatus.OPEN;
 
+	@Column(name = "buyer_close_requested", nullable = false)
+	private boolean buyerCloseRequested = false;
+
+	@Column(name = "seller_close_requested", nullable = false)
+	private boolean sellerCloseRequested = false;
+
+	@Column(name = "buyer_cancel_requested", nullable = false)
+	private boolean buyerCancelRequested = false;
+
+	@Column(name = "seller_cancel_requested", nullable = false)
+	private boolean sellerCancelRequested = false;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "moderation_status", nullable = false, length = 20)
 	private ModerationStatus moderationStatus = ModerationStatus.ACTIVE;

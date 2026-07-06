@@ -87,6 +87,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			update Product p
 			set p.buyer = :buyer,
 			    p.tradeStatus = com.example.campustrade.domain.TradeStatus.LOCKED,
+			    p.buyerCloseRequested = false,
+			    p.sellerCloseRequested = false,
+			    p.buyerCancelRequested = false,
+			    p.sellerCancelRequested = false,
 			    p.updatedAt = :now
 			where p.id = :productId
 			  and p.tradeStatus = com.example.campustrade.domain.TradeStatus.OPEN

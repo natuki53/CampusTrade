@@ -1,5 +1,6 @@
 package com.example.campustrade.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -74,14 +75,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query("""
 			update Product p
 			set p.buyer = :buyer,
-			    p.tradeStatus = com.example.campustrade.domain.TradeStatus.LOCKED
+			    p.tradeStatus = com.example.campustrade.domain.TradeStatus.LOCKED,
+			    p.updatedAt = :now
 			where p.id = :productId
 			  and p.tradeStatus = com.example.campustrade.domain.TradeStatus.OPEN
 			  and p.moderationStatus = com.example.campustrade.domain.ModerationStatus.ACTIVE
 			  and p.deletedAt is null
 			  and p.seller.id <> :buyerId
 			""")
-	int lockForPurchase(@Param("productId") Long productId, @Param("buyer") AppUser buyer, @Param("buyerId") Long buyerId);
+	int lockForPurchase(@Param("productId") Long productId, @Param("buyer") AppUser buyer,
+			@Param("buyerId") Long buyerId, @Param("now") LocalDateTime now);
 
 	List<Product> findByModerationStatusOrderByCreatedAtDesc(ModerationStatus moderationStatus);
 }

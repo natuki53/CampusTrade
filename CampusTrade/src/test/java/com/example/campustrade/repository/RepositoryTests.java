@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.campustrade.domain.AppUser;
 import com.example.campustrade.domain.Category;
@@ -44,6 +45,15 @@ class RepositoryTests {
 
 		assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
 		assertThat(admin.getPassword()).startsWith("$2a$");
+		assertThat(new BCryptPasswordEncoder().matches("password", admin.getPassword())).isTrue();
+	}
+
+	@Test
+	void initialSampleUsersUseDocumentedPassword() {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		assertThat(appUserRepository.findByStudentNumber("s1001")).hasValueSatisfying(user ->
+				assertThat(passwordEncoder.matches("password", user.getPassword())).isTrue());
 	}
 
 	@Test

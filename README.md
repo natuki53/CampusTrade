@@ -10,6 +10,7 @@ CampusTrade は、学内で教科書、参考書、生活用品などを学生�
 - [設計書一覧](./docs/README.md)
 - [基本設計書](./docs/basic-design.md)
 - [DB設計書](./docs/db-design.md)
+- [カテゴリ設計書](./docs/category-design.md)
 - [画面遷移・URL設計書](./docs/screen-url-design.md)
 - [機能詳細設計書](./docs/feature-detail-design.md)
 - [UIプロトタイプ](./prototype/index.html)

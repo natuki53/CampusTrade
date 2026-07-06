@@ -729,6 +729,53 @@ a {
   font-size: 26px;
 }
 
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+td form {
+  margin: 0;
+}
+
+.category-table {
+  margin-top: 22px;
+}
+
+.inline-admin-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inline-admin-form input {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+}
+
 @media (max-width: 760px) {
   .app-header,
   .search-stage,

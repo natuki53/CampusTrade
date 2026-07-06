@@ -111,6 +111,25 @@ public class ProductService {
 		return productRepository.findSalesForSeller(currentUser.getId());
 	}
 
+	@Transactional(readOnly = true)
+	public List<Product> findAllForAdmin() {
+		return productRepository.findAllForAdmin();
+	}
+
+	@Transactional
+	public void prohibit(Long id) {
+		Product product = productRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		product.setModerationStatus(ModerationStatus.PROHIBITED);
+	}
+
+	@Transactional
+	public void activate(Long id) {
+		Product product = productRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		product.setModerationStatus(ModerationStatus.ACTIVE);
+	}
+
 	@Transactional
 	public Product updateProduct(Long id, ProductForm form, AppUser currentUser) {
 		Product product = findEditableProduct(id, currentUser);

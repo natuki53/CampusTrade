@@ -69,6 +69,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	List<Product> findAllByOrderByCreatedAtDesc();
 
+	@Query("""
+			select p from Product p
+			join fetch p.seller
+			join fetch p.category c
+			left join fetch c.parent
+			left join fetch p.buyer
+			order by p.createdAt desc
+			""")
+	List<Product> findAllForAdmin();
+
 	long countByCategoryId(Long categoryId);
 
 	@Modifying(clearAutomatically = true, flushAutomatically = true)

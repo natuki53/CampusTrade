@@ -4,6 +4,9 @@
 /.metadata/
 /Servers/
 
+# VS Code workspace metadata
+/.vscode/
+
 # Other workspace projects
 /R08_S3A1SP応用/
 /先生提出用フォルダ/

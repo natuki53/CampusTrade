@@ -39,7 +39,10 @@
     <div class="product-grid" th:if="${!products.isEmpty()}">
       <article class="product-card" th:each="product : ${products}">
         <a th:href="@{/products/{id}(id=${product.id})}">
-          <div class="product-thumb">CT</div>
+          <div class="product-thumb" th:if="${primaryImageIds[product.id] == null}">CT</div>
+          <img class="product-thumb product-thumb-img" th:if="${primaryImageIds[product.id] != null}"
+              th:src="@{/products/{productId}/images/{imageId}(productId=${product.id}, imageId=${primaryImageIds[product.id]})}"
+              th:alt="${product.name}">
           <div class="product-info">
             <p class="price" th:text="|¥${#numbers.formatInteger(product.price, 0, 'COMMA')}|">¥1,200</p>
             <h3 th:text="${product.name}">商品名</h3>

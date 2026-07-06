@@ -21,9 +21,11 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String index(Model model) {
+		var products = productService.findNewPublicProducts();
 		model.addAttribute("searchForm", new ProductSearchForm());
 		model.addAttribute("rootCategories", categoryService.findRootCategories());
-		model.addAttribute("products", productService.findNewPublicProducts());
+		model.addAttribute("products", products);
+		model.addAttribute("primaryImageIds", productService.findPrimaryImageIds(products));
 		return "home/index";
 	}
 }

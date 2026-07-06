@@ -42,6 +42,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			""")
 	Optional<Product> findDetailById(@Param("id") Long id);
 
+	Optional<Product> findByName(String name);
+
 	@Query("""
 			select p from Product p
 			join fetch p.seller

@@ -48,7 +48,7 @@ class RepositoryTests {
 	@Test
 	void publicProductSearchExcludesUnavailableProducts() {
 		AppUser seller = new AppUser();
-		seller.setStudentNumber("s1001");
+		seller.setStudentNumber("repo-test-seller");
 		seller.setPassword("password");
 		seller.setNickname("seller");
 		seller.setRole(UserRole.STUDENT);
@@ -56,14 +56,14 @@ class RepositoryTests {
 
 		Category textbook = categoryRepository.findById(110L).orElseThrow();
 
-		Product visible = product("統計学入門", seller, textbook, TradeStatus.OPEN, ModerationStatus.ACTIVE);
-		Product locked = product("英語参考書", seller, textbook, TradeStatus.LOCKED, ModerationStatus.ACTIVE);
-		Product prohibited = product("禁止商品", seller, textbook, TradeStatus.OPEN, ModerationStatus.PROHIBITED);
+		Product visible = product("リポジトリ検索専用商品", seller, textbook, TradeStatus.OPEN, ModerationStatus.ACTIVE);
+		Product locked = product("リポジトリ検索専用商品 取引中", seller, textbook, TradeStatus.LOCKED, ModerationStatus.ACTIVE);
+		Product prohibited = product("リポジトリ検索専用商品 禁止", seller, textbook, TradeStatus.OPEN, ModerationStatus.PROHIBITED);
 		productRepository.saveAll(List.of(visible, locked, prohibited));
 
-		List<Product> results = productRepository.searchPublicProducts(null, null);
+		List<Product> results = productRepository.searchPublicProducts("リポジトリ検索専用商品", null);
 
-		assertThat(results).extracting(Product::getName).containsExactly("統計学入門");
+		assertThat(results).extracting(Product::getName).containsExactly("リポジトリ検索専用商品");
 	}
 
 	private Product product(String name, AppUser seller, Category category, TradeStatus tradeStatus,

@@ -385,6 +385,12 @@ a {
   font-weight: 900;
 }
 
+.product-thumb-img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
 .product-info {
   display: grid;
   gap: 4px;

@@ -50,9 +50,11 @@ public class ProductController {
 
 	@GetMapping("/products")
 	public String list(@ModelAttribute("searchForm") ProductSearchForm form, Model model) {
+		var products = productService.searchPublicProducts(form);
 		model.addAttribute("categories", categoryService.findAll());
 		model.addAttribute("rootCategories", categoryService.findRootCategories());
-		model.addAttribute("products", productService.searchPublicProducts(form));
+		model.addAttribute("products", products);
+		model.addAttribute("primaryImageIds", productService.findPrimaryImageIds(products));
 		return "products/list";
 	}
 

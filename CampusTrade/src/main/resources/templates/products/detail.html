@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title th:text="|${product.name} | CampusTrade|">商品詳細 | CampusTrade</title>
+  <title th:text="${product.name + ' | CampusTrade'}">商品詳細 | CampusTrade</title>
   <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>

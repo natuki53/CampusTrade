@@ -13,6 +13,7 @@ CampusTrade は、学内で教科書、参考書、生活用品などを学生�
 - [カテゴリ設計書](./docs/category-design.md)
 - [画面遷移・URL設計書](./docs/screen-url-design.md)
 - [機能詳細設計書](./docs/feature-detail-design.md)
+- [サンプルデータ画像の出典](./docs/sample-data-sources.md)
 - [UIプロトタイプ](./prototype/index.html)
 
 ## 技術構成
@@ -109,6 +110,17 @@ export SPRING_DATASOURCE_PASSWORD='campustrade'
 |---|---|
 | 学生番号 | `admin` |
 | パスワード | `password` |
+
+商品テストデータとして、出品中・取引中・取引完了・管理確認用の商品が登録されます。サンプル学生ユーザーのパスワードはいずれも `password` です。
+
+| 学生番号 | ニックネーム |
+|---|---|
+| `s1001` | 佐藤なつ |
+| `s1002` | 田中ゆうき |
+| `s1003` | 山田あおい |
+| `s1004` | 鈴木みなと |
+
+商品画像の出典は [サンプルデータ画像の出典](./docs/sample-data-sources.md) に記載しています。
 
 ## 主な機能
 

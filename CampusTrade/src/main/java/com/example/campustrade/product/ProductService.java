@@ -2,7 +2,9 @@ package com.example.campustrade.product;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
@@ -58,6 +60,16 @@ public class ProductService {
 		return productRepository.searchPublicProducts(null, null).stream()
 				.limit(8)
 				.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Map<Long, Long> findPrimaryImageIds(List<Product> products) {
+		Map<Long, Long> primaryImageIds = new HashMap<>();
+		for (Product product : products) {
+			productImageRepository.findFirstByProductIdAndPrimaryFlagTrueOrderByDisplayOrderAsc(product.getId())
+					.ifPresent(image -> primaryImageIds.put(product.getId(), image.getId()));
+		}
+		return primaryImageIds;
 	}
 
 	@Transactional(readOnly = true)

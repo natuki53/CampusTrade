@@ -163,7 +163,26 @@ public class ProductService {
 		if (!product.getSeller().getId().equals(currentUser.getId())) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		}
+		if (product.getTradeStatus() != TradeStatus.OPEN) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "取引中または取引完了の商品は非公開にできません");
+		}
 		product.setDeletedAt(LocalDateTime.now());
+	}
+
+	@Transactional
+	public void publish(Long id, AppUser currentUser) {
+		Product product = productRepository.findDetailById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if (!product.getSeller().getId().equals(currentUser.getId())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		if (product.getTradeStatus() != TradeStatus.OPEN) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "取引中または取引完了の商品は公開できません");
+		}
+		if (product.getModerationStatus() == ModerationStatus.PROHIBITED) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "管理者により非表示の商品は公開できません");
+		}
+		product.setDeletedAt(null);
 	}
 
 	public boolean canViewRestrictedProduct(Product product, AppUser viewer) {

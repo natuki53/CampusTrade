@@ -2,6 +2,7 @@ package com.example.campustrade.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,9 @@ class RepositoryTests {
 		Product visible = product("リポジトリ検索専用商品", seller, textbook, TradeStatus.OPEN, ModerationStatus.ACTIVE);
 		Product locked = product("リポジトリ検索専用商品 取引中", seller, textbook, TradeStatus.LOCKED, ModerationStatus.ACTIVE);
 		Product prohibited = product("リポジトリ検索専用商品 禁止", seller, textbook, TradeStatus.OPEN, ModerationStatus.PROHIBITED);
-		productRepository.saveAll(List.of(visible, locked, prohibited));
+		Product deleted = product("リポジトリ検索専用商品 非公開", seller, textbook, TradeStatus.OPEN, ModerationStatus.ACTIVE);
+		deleted.setDeletedAt(LocalDateTime.now());
+		productRepository.saveAll(List.of(visible, locked, prohibited, deleted));
 
 		List<Product> results = productRepository.searchPublicProducts("リポジトリ検索専用商品", null);
 

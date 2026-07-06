@@ -18,21 +18,29 @@
       <a class="primary-link" th:href="@{/products/new}">出品する</a>
     </div>
 
+    <p class="alert success" th:if="${successMessage}" th:text="${successMessage}">完了しました</p>
+
     <div class="list-stack" th:if="${!products.isEmpty()}">
       <article class="list-item" th:each="product : ${products}">
         <div>
           <p class="eyebrow" th:text="${product.category.name}">カテゴリ</p>
           <h2 th:text="${product.name}">商品名</h2>
           <p>
-            <span th:text="${product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).OPEN ? '出品中' : product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED ? '取引中' : '取引完了'}">出品中</span>
+            <span th:text="${product.moderationStatus == T(com.example.campustrade.domain.ModerationStatus).PROHIBITED ? '管理者非表示' : product.deleted ? '非公開' : product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).OPEN ? '出品中' : product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED ? '取引中' : '取引完了'}">出品中</span>
             <span th:if="${product.buyer != null}"> / 購入者: </span>
             <span th:if="${product.buyer != null}" th:text="${product.buyer.nickname}">購入者</span>
           </p>
         </div>
-        <a class="secondary-button" th:if="${product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).OPEN}"
-            th:href="@{/products/{id}(id=${product.id})}">商品詳細</a>
-        <a class="primary-link" th:if="${product.tradeStatus != T(com.example.campustrade.domain.TradeStatus).OPEN}"
-            th:href="@{/mypage/sales/{id}(id=${product.id})}">取引詳細</a>
+        <div class="list-actions">
+          <a class="secondary-button" th:if="${product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).OPEN}"
+              th:href="@{/products/{id}(id=${product.id})}">商品詳細</a>
+          <form th:if="${product.deleted and product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).OPEN and product.moderationStatus == T(com.example.campustrade.domain.ModerationStatus).ACTIVE}"
+              th:action="@{/mypage/sales/{id}/publish(id=${product.id})}" method="post">
+            <button class="primary-button" type="submit">公開する</button>
+          </form>
+          <a class="primary-link" th:if="${product.tradeStatus != T(com.example.campustrade.domain.TradeStatus).OPEN}"
+              th:href="@{/mypage/sales/{id}(id=${product.id})}">取引詳細</a>
+        </div>
       </article>
     </div>
     <p class="empty-state" th:if="${products.isEmpty()}">出品した商品はありません。</p>

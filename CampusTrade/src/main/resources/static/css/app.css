@@ -713,6 +713,13 @@ a {
   color: var(--muted);
 }
 
+.list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .transaction-layout {
   display: grid;
   grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);

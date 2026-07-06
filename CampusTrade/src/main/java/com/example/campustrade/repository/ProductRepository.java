@@ -51,7 +51,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			left join fetch c.parent
 			left join fetch p.buyer
 			where p.seller.id = :sellerId
-			  and p.deletedAt is null
 			order by p.createdAt desc
 			""")
 	List<Product> findSalesForSeller(@Param("sellerId") Long sellerId);

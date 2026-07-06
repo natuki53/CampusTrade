@@ -77,6 +77,10 @@ public class Product {
 				&& deletedAt == null;
 	}
 
+	public boolean isDeleted() {
+		return deletedAt != null;
+	}
+
 	@PrePersist
 	void onCreate() {
 		LocalDateTime now = LocalDateTime.now();

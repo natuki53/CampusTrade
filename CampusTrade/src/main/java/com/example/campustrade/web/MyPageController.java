@@ -57,6 +57,15 @@ public class MyPageController {
 		return "mypage/sales";
 	}
 
+	@PostMapping("/mypage/sales/{productId}/publish")
+	public String publishSale(@PathVariable Long productId,
+			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
+			RedirectAttributes redirectAttributes) {
+		productService.publish(productId, userDetails.getUser());
+		redirectAttributes.addFlashAttribute("successMessage", "商品を公開しました");
+		return "redirect:/mypage/sales";
+	}
+
 	@GetMapping("/mypage/purchases/{productId}")
 	public String purchaseDetail(@PathVariable Long productId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,

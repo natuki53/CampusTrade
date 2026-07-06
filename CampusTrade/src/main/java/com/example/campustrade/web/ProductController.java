@@ -125,7 +125,7 @@ public class ProductController {
 	@PostMapping("/products/{id}/delete")
 	public String delete(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
 		productService.softDelete(id, userDetails.getUser());
-		return "redirect:/mypage";
+		return "redirect:/mypage/sales";
 	}
 
 	@GetMapping("/products/{id}")

@@ -52,7 +52,24 @@
         <small class="field-error" th:if="${#fields.hasErrors('conditionLabel')}" th:errors="*{conditionLabel}"></small>
       </label>
       <div class="image-upload-field">
-        <span th:text="${mode == 'edit' ? '商品画像（選択すると全画像を差し替え）' : '商品画像'}">商品画像</span>
+        <span th:text="${mode == 'edit' ? '商品画像（追加・削除できます）' : '商品画像'}">商品画像</span>
+        <div class="existing-image-panel" th:if="${mode == 'edit' and existingImages != null and !existingImages.isEmpty()}">
+          <div class="existing-image-head">
+            <span>現在の画像</span>
+            <small>削除ボタンを押すと確認後に画像を削除します。新しい画像は現在の画像に追加されます。</small>
+          </div>
+          <ul class="existing-image-list">
+            <li th:each="image, stat : ${existingImages}"
+                th:data-image-id="${image.id}"
+                th:data-delete-url="@{/products/{productId}/images/{imageId}/delete(productId=${product.id}, imageId=${image.id})}"
+                th:data-delete-message="|この画像を削除しますか？|"
+                data-existing-image-item>
+              <img th:src="@{/products/{productId}/images/{imageId}(productId=${product.id}, imageId=${image.id})}"
+                  th:alt="|${product.name} 現在の画像${stat.count}|">
+              <button class="existing-image-delete-button" type="button" data-existing-image-delete>削除</button>
+            </li>
+          </ul>
+        </div>
         <label class="image-picker" for="images">
           <span class="image-picker-action">画像を追加</span>
           <span class="image-picker-status" data-image-upload-status>0/5枚</span>

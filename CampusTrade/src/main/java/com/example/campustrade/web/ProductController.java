@@ -88,25 +88,21 @@ public class ProductController {
 	}
 
 	@GetMapping("/products/{id}/edit")
-	public String editForm(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
+	public String editForm(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			Model model) {
 		Product product = productService.findEditableProduct(id, userDetails.getUser());
-		model.addAttribute("product", product);
 		model.addAttribute("productForm", ProductForm.from(product));
-		model.addAttribute("categories", categoryService.findSelectableCategories());
-		model.addAttribute("mode", "edit");
+		populateEditFormModel(model, product);
 		return "products/form";
 	}
 
 	@PostMapping("/products/{id}/edit")
-	public String update(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
+	public String update(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			@Valid @ModelAttribute("productForm") ProductForm form,
 			BindingResult bindingResult,
 			Model model) {
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("product", productService.findEditableProduct(id, userDetails.getUser()));
-			model.addAttribute("categories", categoryService.findSelectableCategories());
-			model.addAttribute("mode", "edit");
+			populateEditFormModel(model, productService.findEditableProduct(id, userDetails.getUser()));
 			return "products/form";
 		}
 
@@ -115,21 +111,19 @@ public class ProductController {
 			return "redirect:/products/" + id;
 		} catch (InvalidProductImageException ex) {
 			bindingResult.reject("images", ex.getMessage());
-			model.addAttribute("product", productService.findEditableProduct(id, userDetails.getUser()));
-			model.addAttribute("categories", categoryService.findSelectableCategories());
-			model.addAttribute("mode", "edit");
+			populateEditFormModel(model, productService.findEditableProduct(id, userDetails.getUser()));
 			return "products/form";
 		}
 	}
 
 	@PostMapping("/products/{id}/delete")
-	public String delete(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
+	public String delete(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
 		productService.softDelete(id, userDetails.getUser());
 		return "redirect:/mypage/sales";
 	}
 
 	@GetMapping("/products/{id}")
-	public String detail(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
+	public String detail(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			Model model) {
 		AppUser viewer = userDetails == null ? null : userDetails.getUser();
 		Product product = productService.findViewableProduct(id, viewer);
@@ -141,7 +135,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/products/{productId}/images/{imageId}")
-	public ResponseEntity<byte[]> image(@PathVariable Long productId, @PathVariable Long imageId,
+	public ResponseEntity<byte[]> image(@PathVariable("productId") Long productId,
+			@PathVariable("imageId") Long imageId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails) {
 		AppUser viewer = userDetails == null ? null : userDetails.getUser();
 		ProductImage image = productImageService.findViewableImage(productId, imageId, viewer);
@@ -151,8 +146,16 @@ public class ProductController {
 				.body(image.getImageData());
 	}
 
+	@PostMapping("/products/{productId}/images/{imageId}/delete")
+	public ResponseEntity<Void> deleteImage(@PathVariable("productId") Long productId,
+			@PathVariable("imageId") Long imageId,
+			@AuthenticationPrincipal CampusTradeUserDetails userDetails) {
+		productService.deleteProductImage(productId, imageId, userDetails.getUser());
+		return ResponseEntity.noContent().build();
+	}
+
 	@PostMapping("/products/{id}/comments")
-	public String addComment(@PathVariable Long id,
+	public String addComment(@PathVariable("id") Long id,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			@Valid @ModelAttribute("messageForm") MessageForm form,
 			BindingResult bindingResult,
@@ -164,5 +167,13 @@ public class ProductController {
 
 		messageService.addComment(id, userDetails.getUser(), form);
 		return "redirect:/products/" + id;
+	}
+
+	private void populateEditFormModel(Model model, Product product) {
+		model.addAttribute("product", product);
+		model.addAttribute("existingImages",
+				productImageRepository.findByProductIdOrderByDisplayOrderAsc(product.getId()));
+		model.addAttribute("categories", categoryService.findSelectableCategories());
+		model.addAttribute("mode", "edit");
 	}
 }

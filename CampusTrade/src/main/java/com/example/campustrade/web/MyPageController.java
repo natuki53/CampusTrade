@@ -59,7 +59,7 @@ public class MyPageController {
 	}
 
 	@PostMapping("/mypage/sales/{productId}/publish")
-	public String publishSale(@PathVariable Long productId,
+	public String publishSale(@PathVariable("productId") Long productId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			RedirectAttributes redirectAttributes) {
 		productService.publish(productId, userDetails.getUser());
@@ -68,7 +68,7 @@ public class MyPageController {
 	}
 
 	@GetMapping("/mypage/purchases/{productId}")
-	public String purchaseDetail(@PathVariable Long productId,
+	public String purchaseDetail(@PathVariable("productId") Long productId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			Model model) {
 		Product product = tradeService.findBuyerTransaction(productId, userDetails.getUser());
@@ -77,7 +77,7 @@ public class MyPageController {
 	}
 
 	@GetMapping("/mypage/sales/{productId}")
-	public String saleDetail(@PathVariable Long productId,
+	public String saleDetail(@PathVariable("productId") Long productId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			Model model) {
 		Product product = tradeService.findSellerTransaction(productId, userDetails.getUser());
@@ -86,7 +86,7 @@ public class MyPageController {
 	}
 
 	@PostMapping("/mypage/purchases/{productId}/messages")
-	public String sendPurchaseMessage(@PathVariable Long productId,
+	public String sendPurchaseMessage(@PathVariable("productId") Long productId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			@Valid @ModelAttribute("messageForm") MessageForm form,
 			BindingResult bindingResult,
@@ -101,7 +101,7 @@ public class MyPageController {
 	}
 
 	@PostMapping("/mypage/sales/{productId}/messages")
-	public String sendSaleMessage(@PathVariable Long productId,
+	public String sendSaleMessage(@PathVariable("productId") Long productId,
 			@AuthenticationPrincipal CampusTradeUserDetails userDetails,
 			@Valid @ModelAttribute("messageForm") MessageForm form,
 			BindingResult bindingResult,

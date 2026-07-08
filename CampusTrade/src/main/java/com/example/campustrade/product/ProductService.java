@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -146,14 +147,47 @@ public class ProductService {
 	public Product updateProduct(Long id, ProductForm form, AppUser currentUser) {
 		Product product = findEditableProduct(id, currentUser);
 		Category category = findSelectableCategory(form.getCategoryId());
-		List<MultipartFile> images = validatedImages(form.getImages());
+		List<MultipartFile> newImages = validatedImages(form.getImages());
+		List<ProductImage> existingImages = productImageRepository.findByProductIdOrderByDisplayOrderAsc(
+				product.getId());
+		Set<Long> removeImageIds = normalizedRemoveImageIds(form.getRemoveImageIds());
+		List<ProductImage> imagesToRemove = existingImages.stream()
+				.filter(image -> removeImageIds.contains(image.getId()))
+				.toList();
+		if (imagesToRemove.size() != removeImageIds.size()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "削除対象の画像が正しくありません");
+		}
+		List<ProductImage> remainingImages = existingImages.stream()
+				.filter(image -> !removeImageIds.contains(image.getId()))
+				.toList();
+		if (remainingImages.size() + newImages.size() > MAX_IMAGE_COUNT) {
+			throw new InvalidProductImageException("画像は最大5枚まで登録できます");
+		}
 
 		applyForm(product, form, category);
-		if (!images.isEmpty()) {
-			productImageRepository.deleteByProductId(product.getId());
-			saveImages(product, images);
+		if (!imagesToRemove.isEmpty()) {
+			productImageRepository.deleteAll(imagesToRemove);
 		}
+		renumberImages(remainingImages);
+		saveImages(product, newImages, remainingImages.size());
 		return product;
+	}
+
+	@Transactional
+	public void deleteProductImage(Long productId, Long imageId, AppUser currentUser) {
+		Product product = findEditableProduct(productId, currentUser);
+		List<ProductImage> existingImages = productImageRepository.findByProductIdOrderByDisplayOrderAsc(
+				product.getId());
+		ProductImage imageToRemove = existingImages.stream()
+				.filter(image -> image.getId().equals(imageId))
+				.findFirst()
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		List<ProductImage> remainingImages = existingImages.stream()
+				.filter(image -> !image.getId().equals(imageToRemove.getId()))
+				.toList();
+
+		productImageRepository.delete(imageToRemove);
+		renumberImages(remainingImages);
 	}
 
 	@Transactional
@@ -237,20 +271,41 @@ public class ProductService {
 	}
 
 	private void saveImages(Product product, List<MultipartFile> images) {
+		saveImages(product, images, 0);
+	}
+
+	private void saveImages(Product product, List<MultipartFile> images, int startDisplayOrder) {
 		for (int i = 0; i < images.size(); i++) {
 			MultipartFile multipartFile = images.get(i);
 			ProductImage image = new ProductImage();
 			image.setProduct(product);
 			image.setOriginalFilename(multipartFile.getOriginalFilename() == null ? "image" : multipartFile.getOriginalFilename());
 			image.setContentType(multipartFile.getContentType());
-			image.setDisplayOrder(i);
-			image.setPrimaryFlag(i == 0);
+			image.setDisplayOrder(startDisplayOrder + i);
+			image.setPrimaryFlag(startDisplayOrder + i == 0);
 			try {
 				image.setImageData(multipartFile.getBytes());
 			} catch (IOException ex) {
 				throw new InvalidProductImageException("画像を読み込めませんでした");
 			}
 			productImageRepository.save(image);
+		}
+	}
+
+	private Set<Long> normalizedRemoveImageIds(List<Long> removeImageIds) {
+		if (removeImageIds == null) {
+			return Set.of();
+		}
+		return removeImageIds.stream()
+				.filter(id -> id != null)
+				.collect(Collectors.toSet());
+	}
+
+	private void renumberImages(List<ProductImage> images) {
+		for (int i = 0; i < images.size(); i++) {
+			ProductImage image = images.get(i);
+			image.setDisplayOrder(i);
+			image.setPrimaryFlag(i == 0);
 		}
 	}
 }

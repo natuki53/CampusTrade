@@ -38,6 +38,8 @@ public class ProductForm {
 
 	private List<MultipartFile> images = new ArrayList<>();
 
+	private List<Long> removeImageIds = new ArrayList<>();
+
 	public static ProductForm from(Product product) {
 		ProductForm form = new ProductForm();
 		form.setName(product.getName());

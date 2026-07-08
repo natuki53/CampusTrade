@@ -34,13 +34,13 @@ public class AdminController {
 	}
 
 	@PostMapping("/admin/products/{id}/prohibit")
-	public String prohibit(@PathVariable Long id) {
+	public String prohibit(@PathVariable("id") Long id) {
 		productService.prohibit(id);
 		return "redirect:/admin/products";
 	}
 
 	@PostMapping("/admin/products/{id}/activate")
-	public String activate(@PathVariable Long id) {
+	public String activate(@PathVariable("id") Long id) {
 		productService.activate(id);
 		return "redirect:/admin/products";
 	}
@@ -70,7 +70,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/admin/categories/{id}/edit")
-	public String updateCategory(@PathVariable Long id,
+	public String updateCategory(@PathVariable("id") Long id,
 			@Valid @ModelAttribute("categoryForm") CategoryForm form,
 			BindingResult bindingResult,
 			Model model) {
@@ -89,7 +89,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/admin/categories/{id}/delete")
-	public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+	public String deleteCategory(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 		try {
 			categoryService.delete(id);
 		} catch (ResponseStatusException ex) {

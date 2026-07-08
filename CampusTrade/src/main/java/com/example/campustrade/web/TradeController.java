@@ -21,19 +21,19 @@ public class TradeController {
 	}
 
 	@PostMapping("/products/{id}/purchase")
-	public String purchase(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
+	public String purchase(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
 		Product product = tradeService.purchase(id, userDetails.getUser());
 		return "redirect:/mypage/purchases/" + product.getId();
 	}
 
 	@PostMapping("/products/{id}/cancel")
-	public String cancel(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
+	public String cancel(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
 		Product product = tradeService.cancel(id, userDetails.getUser());
 		return redirectAfterCancel(product, userDetails.getUser());
 	}
 
 	@PostMapping("/products/{id}/close")
-	public String close(@PathVariable Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
+	public String close(@PathVariable("id") Long id, @AuthenticationPrincipal CampusTradeUserDetails userDetails) {
 		Product product = tradeService.close(id, userDetails.getUser());
 		return redirectAfterClose(product, userDetails.getUser());
 	}

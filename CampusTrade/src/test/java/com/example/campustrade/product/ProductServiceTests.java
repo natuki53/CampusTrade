@@ -82,6 +82,30 @@ class ProductServiceTests {
 	}
 
 	@Test
+	void createProductRejectsListingWithoutImage() {
+		AppUser seller = user("seller-4007");
+		ProductForm form = newProductForm();
+
+		assertThatThrownBy(() -> productService.createProduct(form, seller))
+				.isInstanceOf(InvalidProductImageException.class)
+				.hasMessage("商品画像を1枚以上選択してください");
+	}
+
+	@Test
+	void createProductAcceptsListingWithImage() {
+		AppUser seller = user("seller-4008");
+		ProductForm form = newProductForm();
+		form.setImages(List.of(
+				new MockMultipartFile("images", "product.jpg", "image/jpeg", new byte[] {1, 2, 3})));
+
+		Product created = productService.createProduct(form, seller);
+
+		assertThat(productImageRepository.findByProductIdOrderByDisplayOrderAsc(created.getId()))
+				.extracting(ProductImage::getOriginalFilename)
+				.containsExactly("product.jpg");
+	}
+
+	@Test
 	void updateProductAddsNewImagesWithoutReplacingExistingImages() {
 		AppUser seller = user("seller-4004");
 		Product product = product("画像追加の商品", seller);
@@ -166,5 +190,15 @@ class ProductServiceTests {
 		image.setDisplayOrder(displayOrder);
 		image.setPrimaryFlag(primary);
 		return productImageRepository.saveAndFlush(image);
+	}
+
+	private ProductForm newProductForm() {
+		ProductForm form = new ProductForm();
+		form.setName("新しい商品");
+		form.setDescription("新しい商品の説明");
+		form.setPrice(1000);
+		form.setCategoryId(110L);
+		form.setConditionLabel("良好");
+		return form;
 	}
 }

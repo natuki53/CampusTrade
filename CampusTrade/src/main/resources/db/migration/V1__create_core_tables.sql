@@ -4,16 +4,16 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     nickname VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL
 );
 
 CREATE TABLE categories (
     id BIGINT PRIMARY KEY,
     parent_id BIGINT NULL,
     name VARCHAR(50) NOT NULL UNIQUE,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
 
@@ -28,9 +28,9 @@ CREATE TABLE products (
     condition_label VARCHAR(50) NOT NULL,
     trade_status VARCHAR(20) NOT NULL,
     moderation_status VARCHAR(20) NOT NULL,
-    deleted_at TIMESTAMP NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    deleted_at DATETIME NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     CONSTRAINT fk_products_seller FOREIGN KEY (seller_id) REFERENCES users(id),
     CONSTRAINT fk_products_buyer FOREIGN KEY (buyer_id) REFERENCES users(id),
     CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id),
@@ -45,7 +45,7 @@ CREATE TABLE product_images (
     image_data LONGBLOB NOT NULL,
     display_order INT NOT NULL,
     primary_flag BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    created_at DATETIME NOT NULL,
     CONSTRAINT fk_product_images_product FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
@@ -57,7 +57,7 @@ CREATE TABLE messages (
     message_type VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     read_flag BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    created_at DATETIME NOT NULL,
     CONSTRAINT fk_messages_product FOREIGN KEY (product_id) REFERENCES products(id),
     CONSTRAINT fk_messages_sender FOREIGN KEY (sender_id) REFERENCES users(id),
     CONSTRAINT fk_messages_receiver FOREIGN KEY (receiver_id) REFERENCES users(id)

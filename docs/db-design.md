@@ -10,9 +10,9 @@
 |---|---|
 | DBMS | MySQL |
 | 文字コード | `utf8mb4` |
-| 照合順序 | `utf8mb4_0900_ai_ci` |
+| 照合順序 | `utf8mb4_unicode_ci` |
 | ID採番 | `BIGINT AUTO_INCREMENT` |
-| 日時 | `TIMESTAMP` |
+| 日時 | `DATETIME` |
 | 画像保存 | DB の `LONGBLOB` に保存 |
 
 ## 3. テーブル一覧
@@ -76,8 +76,8 @@
 | `password` | VARCHAR(255) | 不可 |  | ハッシュ化済みパスワード |
 | `nickname` | VARCHAR(50) | 不可 |  | 画面表示名 |
 | `role` | VARCHAR(20) | 不可 |  | `STUDENT` または `ADMIN` |
-| `created_at` | TIMESTAMP | 不可 |  | 作成日時 |
-| `updated_at` | TIMESTAMP | 不可 |  | 更新日時 |
+| `created_at` | DATETIME | 不可 |  | 作成日時 |
+| `updated_at` | DATETIME | 不可 |  | 更新日時 |
 
 ### 6.2 categories
 
@@ -88,8 +88,8 @@
 | `id` | BIGINT | 不可 | PK | カテゴリID。大分類は100刻み、小分類は大分類内で10刻み |
 | `parent_id` | BIGINT | 可 | FK | 親カテゴリID。大分類は NULL、小分類は大分類ID |
 | `name` | VARCHAR(50) | 不可 | UNIQUE | カテゴリ名 |
-| `created_at` | TIMESTAMP | 不可 |  | 作成日時 |
-| `updated_at` | TIMESTAMP | 不可 |  | 更新日時 |
+| `created_at` | DATETIME | 不可 |  | 作成日時 |
+| `updated_at` | DATETIME | 不可 |  | 更新日時 |
 
 商品の `category_id` には小分類IDのみを保存する。
 
@@ -107,9 +107,9 @@
 | `condition_label` | VARCHAR(50) | 不可 |  | 商品状態 |
 | `trade_status` | VARCHAR(20) | 不可 |  | `OPEN`, `LOCKED`, `CLOSED` |
 | `moderation_status` | VARCHAR(20) | 不可 |  | `ACTIVE`, `PROHIBITED` |
-| `deleted_at` | TIMESTAMP | 可 |  | 出品者による非表示日時 |
-| `created_at` | TIMESTAMP | 不可 |  | 作成日時 |
-| `updated_at` | TIMESTAMP | 不可 |  | 更新日時 |
+| `deleted_at` | DATETIME | 可 |  | 出品者による非表示日時 |
+| `created_at` | DATETIME | 不可 |  | 作成日時 |
+| `updated_at` | DATETIME | 不可 |  | 更新日時 |
 
 通常の商品一覧では、以下の条件を満たす商品だけを表示する。
 
@@ -130,7 +130,7 @@ AND deleted_at IS NULL
 | `image_data` | LONGBLOB | 不可 |  | 画像バイナリ |
 | `display_order` | INT | 不可 |  | 商品詳細での表示順 |
 | `primary_flag` | BOOLEAN | 不可 |  | 一覧表示用の代表画像かどうか |
-| `created_at` | TIMESTAMP | 不可 |  | 作成日時 |
+| `created_at` | DATETIME | 不可 |  | 作成日時 |
 
 画像登録ルール:
 
@@ -151,7 +151,7 @@ AND deleted_at IS NULL
 | `message_type` | VARCHAR(20) | 不可 |  | `COMMENT` または `TRANSACTION` |
 | `content` | TEXT | 不可 |  | メッセージ本文 |
 | `read_flag` | BOOLEAN | 不可 |  | 既読フラグ |
-| `created_at` | TIMESTAMP | 不可 |  | 送信日時 |
+| `created_at` | DATETIME | 不可 |  | 送信日時 |
 
 メッセージ表示ルール:
 
@@ -237,18 +237,18 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     nickname VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE categories (
     id BIGINT PRIMARY KEY,
     parent_id BIGINT NULL,
     name VARCHAR(50) NOT NULL UNIQUE,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(id)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -261,14 +261,14 @@ CREATE TABLE products (
     condition_label VARCHAR(50) NOT NULL,
     trade_status VARCHAR(20) NOT NULL,
     moderation_status VARCHAR(20) NOT NULL,
-    deleted_at TIMESTAMP NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    deleted_at DATETIME NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     CONSTRAINT fk_products_seller FOREIGN KEY (seller_id) REFERENCES users(id),
     CONSTRAINT fk_products_buyer FOREIGN KEY (buyer_id) REFERENCES users(id),
     CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id),
     CONSTRAINT chk_products_price CHECK (price >= 0)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE product_images (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -278,9 +278,9 @@ CREATE TABLE product_images (
     image_data LONGBLOB NOT NULL,
     display_order INT NOT NULL,
     primary_flag BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    created_at DATETIME NOT NULL,
     CONSTRAINT fk_product_images_product FOREIGN KEY (product_id) REFERENCES products(id)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE messages (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -290,11 +290,11 @@ CREATE TABLE messages (
     message_type VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     read_flag BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    created_at DATETIME NOT NULL,
     CONSTRAINT fk_messages_product FOREIGN KEY (product_id) REFERENCES products(id),
     CONSTRAINT fk_messages_sender FOREIGN KEY (sender_id) REFERENCES users(id),
     CONSTRAINT fk_messages_receiver FOREIGN KEY (receiver_id) REFERENCES users(id)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE INDEX idx_products_search
     ON products(category_id, trade_status, moderation_status, deleted_at);

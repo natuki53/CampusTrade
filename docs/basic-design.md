@@ -131,15 +131,15 @@ erDiagram
         varchar password
         varchar nickname
         varchar role
-        timestamp created_at
-        timestamp updated_at
+        datetime created_at
+        datetime updated_at
     }
 
     CATEGORIES {
         bigint id PK
         varchar name
-        timestamp created_at
-        timestamp updated_at
+        datetime created_at
+        datetime updated_at
     }
 
     PRODUCTS {
@@ -153,9 +153,9 @@ erDiagram
         varchar condition_label
         varchar trade_status
         varchar moderation_status
-        timestamp deleted_at
-        timestamp created_at
-        timestamp updated_at
+        datetime deleted_at
+        datetime created_at
+        datetime updated_at
     }
 
     PRODUCT_IMAGES {
@@ -166,7 +166,7 @@ erDiagram
         longblob image_data
         int display_order
         boolean primary_flag
-        timestamp created_at
+        datetime created_at
     }
 
     MESSAGES {
@@ -177,7 +177,7 @@ erDiagram
         varchar message_type
         text content
         boolean read_flag
-        timestamp created_at
+        datetime created_at
     }
 ```
 
@@ -190,8 +190,8 @@ erDiagram
 | password | VARCHAR(255) | NOT NULL | ハッシュ化済みパスワード |
 | nickname | VARCHAR(50) | NOT NULL | 画面表示用の名前 |
 | role | VARCHAR(20) | NOT NULL | `STUDENT` または `ADMIN` |
-| created_at | TIMESTAMP | NOT NULL | 作成日時 |
-| updated_at | TIMESTAMP | NOT NULL | 更新日時 |
+| created_at | DATETIME | NOT NULL | 作成日時 |
+| updated_at | DATETIME | NOT NULL | 更新日時 |
 
 ### 5.3 products
 
@@ -207,9 +207,9 @@ erDiagram
 | condition_label | VARCHAR(50) | NOT NULL | 商品状態 |
 | trade_status | VARCHAR(20) | NOT NULL | `OPEN`, `LOCKED`, `CLOSED` |
 | moderation_status | VARCHAR(20) | NOT NULL | `ACTIVE`, `PROHIBITED` |
-| deleted_at | TIMESTAMP | NULL | 出品者による非表示日時 |
-| created_at | TIMESTAMP | NOT NULL | 作成日時 |
-| updated_at | TIMESTAMP | NOT NULL | 更新日時 |
+| deleted_at | DATETIME | NULL | 出品者による非表示日時 |
+| created_at | DATETIME | NOT NULL | 作成日時 |
+| updated_at | DATETIME | NOT NULL | 更新日時 |
 
 `trade_status` は取引の状態、`moderation_status` は管理者による表示制御の状態として分ける。これにより、取引中の商品でも規約違反として非表示にできる。
 
@@ -224,8 +224,8 @@ erDiagram
 | id | BIGINT | PK | カテゴリID。大分類は100刻み、小分類は大分類内で10刻み |
 | parent_id | BIGINT | NULL, FK | 親カテゴリID。大分類は NULL、小分類は大分類IDを設定 |
 | name | VARCHAR(50) | NOT NULL, UNIQUE | カテゴリ名 |
-| created_at | TIMESTAMP | NOT NULL | 作成日時 |
-| updated_at | TIMESTAMP | NOT NULL | 更新日時 |
+| created_at | DATETIME | NOT NULL | 作成日時 |
+| updated_at | DATETIME | NOT NULL | 更新日時 |
 
 商品の `category_id` には **小分類ID**（110, 120, …）を保存する。検索UIでは大分類または小分類で絞り込めるようにする。
 
@@ -242,7 +242,7 @@ erDiagram
 | image_data | LONGBLOB | NOT NULL | 画像バイナリ |
 | display_order | INT | NOT NULL | 表示順 |
 | primary_flag | BOOLEAN | NOT NULL | 一覧で使う代表画像かどうか |
-| created_at | TIMESTAMP | NOT NULL | 作成日時 |
+| created_at | DATETIME | NOT NULL | 作成日時 |
 
 商品画像は DB に保存する。1商品につき最大5枚まで登録でき、1枚あたりの上限は5MBとする。商品一覧では `primary_flag = true` の画像を表示し、商品詳細では `display_order` の昇順で表示する。
 
@@ -257,7 +257,7 @@ erDiagram
 | message_type | VARCHAR(20) | NOT NULL | `COMMENT` または `TRANSACTION` |
 | content | TEXT | NOT NULL | メッセージ本文 |
 | read_flag | BOOLEAN | NOT NULL | 既読フラグ |
-| created_at | TIMESTAMP | NOT NULL | 送信日時 |
+| created_at | DATETIME | NOT NULL | 送信日時 |
 
 ## 6. 権限制御
 

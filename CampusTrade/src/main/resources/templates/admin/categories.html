@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>カテゴリ管理 | CampusTrade</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/header :: header('admin')}"></div>
+
+  <main class="page">
+    <div class="page-title-row">
+      <div>
+        <p class="eyebrow">Admin</p>
+        <h1>カテゴリ管理</h1>
+      </div>
+      <a class="secondary-button" th:href="@{/admin/products}">商品管理</a>
+    </div>
+
+    <p class="alert danger" th:if="${categoryError}" th:text="${categoryError}">エラー</p>
+
+    <form class="editor-form" th:action="@{/admin/categories}" th:object="${categoryForm}" method="post">
+      <div class="form-grid">
+        <label>
+          <span>ID</span>
+          <input type="number" th:field="*{id}" required>
+          <small class="field-error" th:if="${#fields.hasErrors('id')}" th:errors="*{id}"></small>
+        </label>
+        <label>
+          <span>親カテゴリ</span>
+          <select th:field="*{parentId}">
+            <option value="">大分類として追加</option>
+            <option th:each="category : ${rootCategories}" th:value="${category.id}" th:text="${category.name}">親</option>
+          </select>
+        </label>
+      </div>
+      <label>
+        <span>カテゴリ名</span>
+        <input type="text" th:field="*{name}" required>
+        <small class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+      </label>
+      <small class="field-error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></small>
+      <button class="primary-button" type="submit">追加する</button>
+    </form>
+
+    <div class="table-wrap category-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>親ID</th>
+            <th>カテゴリ名</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="category : ${categories}">
+            <td th:text="${category.id}">100</td>
+            <td th:text="${category.parent == null ? '-' : category.parent.id}">-</td>
+            <td>
+              <form class="inline-admin-form" th:action="@{/admin/categories/{id}/edit(id=${category.id})}" method="post">
+                <input type="hidden" name="id" th:value="${category.id}">
+                <input type="hidden" name="parentId" th:value="${category.parent == null ? '' : category.parent.id}">
+                <input type="text" name="name" th:value="${category.name}" required>
+                <button class="secondary-button" type="submit">更新</button>
+              </form>
+            </td>
+            <td>
+              <form th:action="@{/admin/categories/{id}/delete(id=${category.id})}" method="post">
+                <button class="danger-button" type="submit">削除</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

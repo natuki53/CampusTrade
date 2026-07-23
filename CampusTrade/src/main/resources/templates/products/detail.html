@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${product.name + ' | CampusTrade'}">商品詳細 | CampusTrade</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script th:src="@{/js/purchase-confirm.js}" defer></script>
+</head>
+<body>
+  <div th:replace="~{fragments/header :: header('search')}"></div>
+
+  <main class="page">
+    <a class="back-link" th:href="@{/products}">商品検索へ戻る</a>
+
+    <section class="detail-layout">
+      <div class="image-gallery">
+        <div class="detail-main-image" th:if="${images.isEmpty()}">CT</div>
+        <img class="detail-main-image" th:if="${!images.isEmpty()}"
+            th:src="@{/products/{productId}/images/{imageId}(productId=${product.id}, imageId=${images[0].id})}"
+            th:alt="${product.name}">
+        <div class="thumb-row" th:if="${images.size() > 1}">
+          <img th:each="image : ${images}"
+              th:src="@{/products/{productId}/images/{imageId}(productId=${product.id}, imageId=${image.id})}"
+              th:alt="${product.name}">
+        </div>
+      </div>
+
+      <section class="detail-panel">
+        <p class="eyebrow" th:text="${product.category.name}">カテゴリ</p>
+        <h1 th:text="${product.name}">商品名</h1>
+        <p class="detail-price" th:text="|¥${#numbers.formatInteger(product.price, 0, 'COMMA')}|">¥1,200</p>
+        <div class="badge-row">
+          <span class="badge open" th:text="${product.moderationStatus == T(com.example.campustrade.domain.ModerationStatus).PROHIBITED ? '管理者非表示' : product.deleted ? '非公開' : product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).OPEN ? '出品中' : product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED ? '取引中' : '取引完了'}">出品中</span>
+          <span class="badge" th:text="${product.conditionLabel}">状態</span>
+        </div>
+        <dl class="meta-list">
+          <div>
+            <dt>出品者</dt>
+            <dd th:text="${product.seller.nickname}">なつ</dd>
+          </div>
+          <div>
+            <dt>出品日時</dt>
+            <dd th:text="${#temporals.format(product.createdAt, 'yyyy/MM/dd HH:mm')}">2026/07/06 10:00</dd>
+          </div>
+        </dl>
+        <p class="description" th:text="${product.description}">商品説明</p>
+
+        <div class="detail-actions">
+          <a class="primary-link" th:if="${currentUser == null and product.visibleToPublic}" th:href="@{/login}">ログインして購入</a>
+          <form th:if="${currentUser != null and product.visibleToPublic and currentUser.id != product.seller.id}"
+              th:action="@{/products/{id}/purchase(id=${product.id})}" method="post"
+              data-purchase-confirm="購入申し込みを行います。申し込み後は出品者との取引メッセージ画面に移動し、受け渡し場所や日時を相談できます。">
+            <button class="primary-button" type="submit">購入申し込み</button>
+          </form>
+          <a class="primary-link" th:if="${currentUser != null and product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED and product.buyer != null and currentUser.id == product.buyer.id}"
+              th:href="@{/mypage/purchases/{id}(id=${product.id})}">取引詳細</a>
+          <a class="primary-link" th:if="${currentUser != null and product.tradeStatus == T(com.example.campustrade.domain.TradeStatus).LOCKED and currentUser.id == product.seller.id}"
+              th:href="@{/mypage/sales/{id}(id=${product.id})}">取引詳細</a>
+          <a class="secondary-button" th:if="${currentUser != null and currentUser.id == product.seller.id and product.visibleToPublic}"
+              th:href="@{/products/{id}/edit(id=${product.id})}">編集</a>
+          <form th:if="${currentUser != null and currentUser.id == product.seller.id and product.visibleToPublic}"
+              th:action="@{/products/{id}/delete(id=${product.id})}" method="post">
+            <button class="danger-button" type="submit">非公開</button>
+          </form>
+        </div>
+      </section>
+    </section>
+
+    <section class="comments-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Comments</p>
+          <h2>商品コメント</h2>
+        </div>
+      </div>
+      <div class="message-list" th:if="${!comments.isEmpty()}">
+        <article class="message-row" th:each="comment : ${comments}">
+          <strong th:text="${comment.sender.nickname}">ユーザー</strong>
+          <p th:text="${comment.content}">コメント本文</p>
+          <time th:text="${#temporals.format(comment.createdAt, 'yyyy/MM/dd HH:mm')}">2026/07/06</time>
+        </article>
+      </div>
+      <p class="empty-state" th:if="${comments.isEmpty()}">まだコメントはありません。</p>
+
+      <form class="inline-form" th:if="${currentUser != null and product.visibleToPublic}"
+          th:action="@{/products/{id}/comments(id=${product.id})}" th:object="${messageForm}" method="post">
+        <label>
+          <span>コメント</span>
+          <textarea th:field="*{content}" rows="3" placeholder="商品の質問や補足を書いてください"></textarea>
+        </label>
+        <p class="field-error" th:if="${commentError}" th:text="${commentError}">エラー</p>
+        <button class="primary-button" type="submit">投稿</button>
+      </form>
+      <p class="login-note" th:if="${currentUser == null}">
+        コメントするには <a th:href="@{/login}">ログイン</a> が必要です。
+      </p>
+    </section>
+  </main>
+</body>
+</html>

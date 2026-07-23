@@ -88,6 +88,9 @@ public class ProductService {
 		AppUser seller = appUserRepository.getReferenceById(currentUser.getId());
 		Category category = findSelectableCategory(form.getCategoryId());
 		List<MultipartFile> images = validatedImages(form.getImages());
+		if (images.isEmpty()) {
+			throw new InvalidProductImageException("商品画像を1枚以上選択してください");
+		}
 
 		Product product = new Product();
 		applyForm(product, form, category);

@@ -22,23 +22,23 @@
     <form class="editor-form" th:action="${mode == 'edit'} ? @{/products/{id}/edit(id=${product.id})} : @{/products}"
         th:object="${productForm}" method="post" enctype="multipart/form-data">
       <label>
-        <span>商品名</span>
+        <span class="field-label">商品名 <span class="required-badge">必須</span></span>
         <input type="text" th:field="*{name}" required>
         <small class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
       </label>
       <label>
-        <span>説明</span>
+        <span class="field-label">説明 <span class="required-badge">必須</span></span>
         <textarea th:field="*{description}" rows="7" required></textarea>
         <small class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
       </label>
       <div class="form-grid">
         <label>
-          <span>価格</span>
+          <span class="field-label">価格 <span class="required-badge">必須</span></span>
           <input type="number" th:field="*{price}" min="0" required>
           <small class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
         </label>
         <label>
-          <span>カテゴリ</span>
+          <span class="field-label">カテゴリ <span class="required-badge">必須</span></span>
           <select th:field="*{categoryId}" required>
             <option value="">選択してください</option>
             <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">カテゴリ</option>
@@ -47,12 +47,16 @@
         </label>
       </div>
       <label>
-        <span>商品状態</span>
+        <span class="field-label">商品状態 <span class="required-badge">必須</span></span>
         <input type="text" th:field="*{conditionLabel}" placeholder="例: 書き込み少なめ、動作確認済み" required>
         <small class="field-error" th:if="${#fields.hasErrors('conditionLabel')}" th:errors="*{conditionLabel}"></small>
       </label>
       <div class="image-upload-field">
-        <span th:text="${mode == 'edit' ? '商品画像（追加・削除できます）' : '商品画像'}">商品画像</span>
+        <span class="field-label">
+          <span th:text="${mode == 'edit' ? '商品画像（追加・削除できます）' : '商品画像'}">商品画像</span>
+          <span class="required-badge" th:if="${mode == 'new'}">必須</span>
+          <span class="optional-badge" th:if="${mode == 'edit'}">追加は任意</span>
+        </span>
         <div class="existing-image-panel" th:if="${mode == 'edit' and existingImages != null and !existingImages.isEmpty()}">
           <div class="existing-image-head">
             <span>現在の画像</span>
@@ -75,9 +79,9 @@
           <span class="image-picker-status" data-image-upload-status>0/5枚</span>
         </label>
         <input class="image-input" type="file" th:field="*{images}" accept="image/jpeg,image/png,image/webp"
-            multiple data-image-upload-input data-max-files="5">
+            multiple th:required="${mode == 'new'}" data-image-upload-input data-max-files="5">
         <ul class="selected-file-list" data-image-upload-list aria-live="polite"></ul>
-        <small class="help-text">最大5枚、1枚5MBまで。JPEG、PNG、WebPに対応しています。</small>
+        <small class="help-text" th:text="${mode == 'new' ? '1枚以上必須です。最大5枚、1枚5MBまで。JPEG、PNG、WebPに対応しています。' : '最大5枚、1枚5MBまで。JPEG、PNG、WebPに対応しています。'}">1枚以上必須です。最大5枚、1枚5MBまで。JPEG、PNG、WebPに対応しています。</small>
         <small class="field-error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></small>
       </div>
       <button class="primary-button" type="submit" th:text="${mode == 'edit' ? '更新する' : '出品する'}">出品する</button>
